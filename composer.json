@@ -1,0 +1,7 @@
+{
+    "name": "dotronglong/phalcon-engine",
+    "description": "An Engine for building Phalcon CMS",
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
