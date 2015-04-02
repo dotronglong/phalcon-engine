@@ -7,28 +7,28 @@ class Bootstrap
 
     /**
      * Global Bootstrap Instance
-     * 
-     * @var \Engine\Bootstrap 
+     *
+     * @var \Engine\Bootstrap
      */
     protected static $instance;
 
     /**
      * Dependency Injection
-     * 
+     *
      * @var \Phalcon\DI\FactoryDefault
      */
     private $di;
 
     /**
      * Application
-     * 
-     * @var \Phalcon\Mvc\Application 
+     *
+     * @var \Phalcon\Mvc\Application
      */
     private $app;
 
     /**
      * Get Boostrap instance
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     public static function getInstance()
@@ -57,18 +57,18 @@ class Bootstrap
         new \Whoops\Provider\Phalcon\WhoopsServiceProvider($boostrap->di);
 
         $boostrap->setupSession()
-                ->setupUrl()
-                ->setupDatabase()
-                ->setupRequest()
-                ->setupRouter()
-                ->setupModules();
+            ->setupUrl()
+            ->setupDatabase()
+            ->setupRequest()
+            ->setupRouter()
+            ->setupModules();
 
         echo $boostrap->app()->handle()->getContent();
     }
 
     /**
      * Setup a base URI so that all generated URIs
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupUrl()
@@ -76,6 +76,7 @@ class Bootstrap
         $this->di->set('url', function () {
             $url = new \Phalcon\Mvc\Url();
             $url->setBaseUri(Engine::config()->app->base_url);
+
             return $url;
         });
 
@@ -84,14 +85,15 @@ class Bootstrap
 
     /**
      * Start the session the first time a component requests the session service
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupSession()
     {
-        $this->di->set('session', function() {
+        $this->di->set('session', function () {
             $session = new \Phalcon\Session\Adapter\Files();
             $session->start();
+
             return $session;
         });
 
@@ -100,12 +102,12 @@ class Bootstrap
 
     /**
      * Database connection is created based on parameters defined in the configuration file
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupDatabase()
     {
-        $this->di->set('db', function() {
+        $this->di->set('db', function () {
             $config = [
                 'host'     => Engine::config()->database->host,
                 'username' => Engine::config()->database->username,
@@ -134,12 +136,12 @@ class Bootstrap
 
     /**
      * Setup Application's request
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupRequest()
     {
-        $this->di->set('request', function() {
+        $this->di->set('request', function () {
             return new \Phalcon\Http\Request();
         }, true);
 
@@ -148,35 +150,81 @@ class Bootstrap
 
     /**
      * Setup Application's router
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupRouter()
     {
-        $this->di->set('router', function() {
-            require PATH_APP_CONFIG . DS . 'routes.php';
-            
+        $this->di->set('router', function () {
+            $fileRoutes = PATH_APP_CONFIG . DS . 'routes.php';
+            if (file_exists($fileRoutes)) {
+                require_once $fileRoutes;
+            } else {
+                // Create the router without default routes
+                $router = new \Phalcon\Mvc\Router(false);
+
+                //Setting a specific default
+                $router->setDefaults([
+                    'module'     => Engine::config()->app->default->module,
+                    'controller' => Engine::config()->app->default->controller,
+                    'action'     => Engine::config()->app->default->action
+                ]);
+
+                //Set 404 paths
+                $router->notFound([
+                    'module'     => 'core',
+                    'controller' => 'error',
+                    'action'     => 'route404'
+                ]);
+
+                // Remove trailing slashes automatically
+                $router->removeExtraSlashes(true);
+
+                // Add default routes
+                $router->add('/', array(
+                    'module' => 'core'
+                ));
+                $router->add('/:module', array(
+                    'module' => 1
+                ));
+                $router->add('/:module/:controller', array(
+                    'module'     => 1,
+                    'controller' => 2
+                ));
+                $router->add('/:module/:controller/:action', array(
+                    'module'     => 1,
+                    'controller' => 2,
+                    'action'     => 3
+                ));
+                $router->add('/:module/:controller/:action/:params', array(
+                    'module'     => 1,
+                    'controller' => 2,
+                    'action'     => 3,
+                    'params'     => 4
+                ));
+            }
+
             return $router;
         }, true);
 
         return $this;
     }
-    
+
     /**
      * Setup Application's modules
-     * 
+     *
      * @return \Engine\Bootstrap
      */
     private function setupModules()
     {
         $this->app()->registerModules([
-            'core' => [
+            'core'  => [
                 'className' => 'App\Modules\Core\Module',
-                'path' => '../app/modules/core/Module.php'
+                'path'      => '../app/modules/core/Module.php'
             ],
             'basic' => [
                 'className' => 'App\Modules\Basic\Module',
-                'path' => '../app/modules/basic/Module.php'
+                'path'      => '../app/modules/basic/Module.php'
             ]
         ]);
 
