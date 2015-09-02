@@ -41,7 +41,7 @@ class Smtp extends Mail
      * Debug's Messages
      * @var array
      */
-    private $debugMessages = array();
+    private $debugMessages = [];
 
     /**
      * SMTP Connection
@@ -71,9 +71,9 @@ class Smtp extends Mail
      * List of email is sent to
      * @var array
      */
-    protected $emailSent = array();
+    protected $emailSent = [];
 
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         parent::__construct($config);
 
@@ -131,7 +131,7 @@ class Smtp extends Mail
         return $debugMessages;
     }
 
-    public function toString($type, $args = array())
+    public function toString($type, $args = [])
     {
         if ($type === self::MAIL_CONTENT) {
             $result = '';
@@ -182,7 +182,7 @@ class Smtp extends Mail
         $host    = $this->getConfig('host', 'localhost');
         $port    = (int) $this->getConfig('port', self::SMTP_DEFAULT_PORT);
         $timeout = (int) $this->getConfig('timeout', self::SMTP_DEFAULT_TIMEOUT);
-        $options = $this->getConfig('options', array());
+        $options = $this->getConfig('options', []);
 
         /**
          * Create stream context if neccessary
@@ -240,28 +240,28 @@ class Smtp extends Mail
 
         switch ($authType) {
             case self::AUTH_LOGIN:
-                if (!$this->exec('AUTH LOGIN', array(
+                if (!$this->exec('AUTH LOGIN', [
                     self::RESP_OK,
                     self::RESP_SERVER_CHALLENGE
-                ))
+                ])
                 ) {
                     $this->addDebugMessage('Failed to use AUTH LOGIN. Server denied.');
 
                     return false;
                 }
-                if (!$this->exec(base64_encode($user), array(
+                if (!$this->exec(base64_encode($user), [
                     self::RESP_OK,
                     self::RESP_SERVER_CHALLENGE
-                ))
+                ])
                 ) {
                     $this->addDebugMessage("$user is rejected by server");
 
                     return false;
                 }
-                if (!$this->exec(base64_encode($pwd), array(
+                if (!$this->exec(base64_encode($pwd), [
                     self::RESP_OK,
                     self::RESP_AUTH_OK
-                ))
+                ])
                 ) {
                     $this->addDebugMessage('Invalid password for email ' . $user);
 
@@ -474,10 +474,10 @@ class Smtp extends Mail
             return false;
         }
         foreach ($to as $rcpt) {
-            if ($this->exec("RCPT TO:<{$rcpt['email']}>", array(
+            if ($this->exec("RCPT TO:<{$rcpt['email']}>", [
                 self::RESP_OK,
                 self::RESP_USER_OK
-            ))
+            ])
             ) {
                 $this->emailSent[] = $rcpt['email'];
             }
@@ -486,10 +486,10 @@ class Smtp extends Mail
         /**
          * Request to start DATA
          */
-        $this->exec('DATA', array(
+        $this->exec('DATA', [
             self::RESP_OK,
             self::RESP_START_INPUT
-        ), true);
+        ], true);
 
         $replyTo = $this->toString(self::MAIL_REPLY_TO);
         $cc      = $this->toString(self::MAIL_CC);

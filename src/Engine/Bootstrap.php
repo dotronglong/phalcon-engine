@@ -181,27 +181,27 @@ class Bootstrap
                 $router->removeExtraSlashes(true);
 
                 // Add default routes
-                $router->add('/', array(
+                $router->add('/', [
                     'module' => 'core'
-                ));
-                $router->add('/:module', array(
+                ]);
+                $router->add('/:module', [
                     'module' => 1
-                ));
-                $router->add('/:module/:controller', array(
+                ]);
+                $router->add('/:module/:controller', [
                     'module'     => 1,
                     'controller' => 2
-                ));
-                $router->add('/:module/:controller/:action', array(
+                ]);
+                $router->add('/:module/:controller/:action', [
                     'module'     => 1,
                     'controller' => 2,
                     'action'     => 3
-                ));
-                $router->add('/:module/:controller/:action/:params', array(
+                ]);
+                $router->add('/:module/:controller/:action/:params', [
                     'module'     => 1,
                     'controller' => 2,
                     'action'     => 3,
                     'params'     => 4
-                ));
+                ]);
             }
 
             return $router;

@@ -37,13 +37,13 @@ abstract class Mail
      * Errors
      * @var array
      */
-    protected $errors = array();
+    protected $errors = []);
 
     /**
      * Default Constructor
      * @param array $config
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         $this->config = $config;
 
@@ -62,11 +62,11 @@ abstract class Mail
      */
     protected function addError($message, $errstr = null, $errno = null)
     {
-        $this->errors[] = array(
+        $this->errors[] = [
             'message' => $message,
             'errstr'  => $errstr,
             'errno'   => $errno
-        );
+        ];
 
         return false;
     }
@@ -77,7 +77,7 @@ abstract class Mail
      */
     protected function clearErrors()
     {
-        $this->errors = array();
+        $this->errors = [];
 
         return $this;
     }
@@ -107,11 +107,11 @@ abstract class Mail
      * Get / Set Configuration
      *
      * <code>
-     * $mail->setConfig(array(
+     * $mail->setConfig([
      *     'host' => 'host_name',
      *     'user' => 'user_name',
      *     [...]
-     * )); // set configuration
+     * ]); // set configuration
      *
      * $mail->setConfig('host', 'host_name'); // set configuration by name
      * </code>
@@ -157,10 +157,10 @@ abstract class Mail
         if (empty($email)) {
             throw new Exception('Email must not be empty');
         }
-        $address = array(
+        $address = [
             'email' => $email,
             'name'  => $name
-        );
+        ];
         if ($merge) {
             $this->data[$type][] = $address;
         } else {
@@ -355,11 +355,11 @@ abstract class Mail
 
     public function __get($name)
     {
-        return isset($this->data[$name]) ? $this->data[$name] : (in_array($name, array(
+        return isset($this->data[$name]) ? $this->data[$name] : (in_array($name, [
             self::MAIL_TO,
             self::MAIL_BCC,
             self::MAIL_CC
-        )) ? array() : null);
+        ]) ? [] : null);
     }
 
     /**
@@ -498,7 +498,7 @@ abstract class Mail
      * @param array  $args
      * @return string
      */
-    public function toString($type, $args = array())
+    public function toString($type, $args = [])
     {
         $return = '';
         switch ($type) {
