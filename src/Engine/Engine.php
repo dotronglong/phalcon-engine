@@ -1,57 +1,36 @@
 <?php namespace Engine;
 
-class Engine
+use Engine\Exception\ClassNotFoundException;
+use Engine\Exception\NullPointerException;
+use ReflectionClass;
+use ReflectionException;
+
+final class Engine
 {
     /**
-     * Global Engine Instance
+     * Create new instance
      *
-     * @var \Engine\Engine
+     * @return mixed
      */
-    protected static $instance;
-
-    /**
-     * Global Configuration
-     *
-     * @var \Phalcon\Config
-     */
-    protected static $config;
-
-    /**
-     * Get Engine instance
-     *
-     * @return \Engine\Engine
-     */
-    public static function getInstance()
+    public static function newInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
+        $args = func_get_args();
+        if (count($args) === 0) {
+            throw new NullPointerException('Class name must be defined!');
         }
 
-        return self::$instance;
-    }
+        $className = $args[0];
+        unset($args[0]);
 
-    /**
-     * Get Static Configuration
-     *
-     * Priority Loaded:
-     * 1. config/domains/[domain].php
-     * 2. config/app.php
-     *
-     * @reutrn \Phalcon\Config
-     */
-    public static function config()
-    {
-        if (self::$config === null) {
-            $domain       = $_SERVER['SERVER_NAME'];
-            $domainConfig = PATH_APP_CONFIG . DS . 'domains' . DS . $domain . '.php';
-            if (file_exists($domainConfig)) {
-                $config   = include_once $domainConfig;
+        try {
+            $rc = new ReflectionClass($className);
+            if (count($args)) {
+                return $rc->newInstanceArgs($args);
             } else {
-                $config   = include_once PATH_APP_CONFIG . DS . 'app.php';
+                return $rc->newInstance();
             }
-            self::$config = new \Phalcon\Config($config);
+        } catch (ReflectionException $e) {
+            throw new ClassNotFoundException("Class $className could not be found.");
         }
-
-        return self::$config;
     }
 }
