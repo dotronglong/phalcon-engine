@@ -16,5 +16,6 @@ class ServiceProvider implements ServiceProviderContract
     public function ready()
     {
         // TODO: Implement ready() method.
+        require PATH_FILE_ROUTES;
     }
 }

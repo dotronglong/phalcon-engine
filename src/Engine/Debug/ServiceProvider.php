@@ -8,7 +8,7 @@ class ServiceProvider implements ServiceProviderContract
     public function boot()
     {
         // TODO: Implement boot() method.
-        $allowDebug = env('debug', false);
+        $allowDebug = env('APP_DEBUG', false);
         if ($allowDebug) {
             new \Whoops\Provider\Phalcon\WhoopsServiceProvider(di());
         }

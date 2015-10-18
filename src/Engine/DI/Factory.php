@@ -5,6 +5,10 @@ use Engine\Engine;
 
 class Factory extends DI implements Contract
 {
+    /**
+     * @var array
+     */
+    protected $providers = [];
 
     public function registerServiceProviders()
     {
@@ -14,6 +18,7 @@ class Factory extends DI implements Contract
             foreach ($providers as $className) {
                 $provider = Engine::newInstance($className);
                 if ($provider instanceof ServiceProvider) {
+                    $this->providers[] = $provider;
                     $provider->boot();
                 }
             }
@@ -23,5 +28,10 @@ class Factory extends DI implements Contract
     public function runServiceProviders()
     {
         // TODO: Implement runServiceProviders() method.
+        if (count($this->providers)) {
+            foreach ($this->providers as $provider) {
+                $provider->ready();
+            }
+        }
     }
 }
