@@ -168,3 +168,21 @@ if ( ! function_exists('db'))
         return di('db');
     }
 }
+
+if ( ! function_exists('route'))
+{
+    /**
+     * Get URI by route's name
+     *
+     * @param string    $name
+     * @param array     $params
+     * @param bool|true $static generate static uri
+     * @return mixed
+     */
+    function route($name, $params = [], $static = true)
+    {
+        $params['for'] = $name;
+        $url = di('url');
+        return $static ? $url->getStatic($params) : $url->get($params);
+    }
+}

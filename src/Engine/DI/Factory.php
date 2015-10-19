@@ -34,4 +34,14 @@ class Factory extends DI implements Contract
             }
         }
     }
+
+    public function get($abstract, $parameters = [])
+    {
+
+    }
+
+    protected function make(HasDependency $abstract, $parameters = [])
+    {
+
+    }
 }

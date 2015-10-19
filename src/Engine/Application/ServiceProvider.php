@@ -33,8 +33,12 @@ class ServiceProvider implements ServiceProviderContract
     protected function registerUrl()
     {
         di()->setShared('url', function () {
+            $protocol = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://';
+            $hostname = $_SERVER['HTTP_HOST'];
+
             $url = new Url();
-            $url->setBaseUri(env('base_url', ''));
+            $url->setStaticBaseUri(env('static_url', "$protocol$hostname/"));
+            $url->setBaseUri(env('base_url', '/'));
 
             return $url;
         });
