@@ -1,7 +1,8 @@
 <?php namespace Engine;
 
 use Engine\Shared\HasSingleton;
-use Engine\DI\Factory as DI;
+use Engine\DI\Container as DI;
+use Engine\DI\ServiceProvider;
 use Engine\Application\Factory as Application;
 
 class Bootstrap
@@ -12,7 +13,7 @@ class Bootstrap
     {
         // Initialize Dependency Injection Container
         di(new DI());
-
+        
         // Run system setup
         self::getInstance()
             ->setupEnv()
@@ -24,11 +25,10 @@ class Bootstrap
         di()->setShared('app', $app);
 
         // System is ready to load
-        di()->runServiceProviders();
+        self::getInstance()->ready();
 
         // Run application
         $app->handle();
-        //dd($application);
     }
 
     /**
@@ -66,6 +66,20 @@ class Bootstrap
 
     protected function setupContainer()
     {
-        di()->registerServiceProviders();
+        di()->setProviders(config('app.providers'));
+        foreach (di()->getProviders() as $name => $provider) {
+            if ($provider instanceof ServiceProvider) {
+                $provider->boot();
+            }
+        }
+    }
+    
+    protected function ready()
+    {
+        foreach (di()->getProviders() as $name => $provider) {
+            if ($provider instanceof ServiceProvider) {
+                $provider->ready();
+            }
+        }
     }
 }

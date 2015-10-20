@@ -5,16 +5,40 @@ use Phalcon\DiInterface;
 interface Contract extends DiInterface
 {
     /**
-     * Use to process service providers
-     *
-     * @return mixed
+     * Add a provider by name
+     * 
+     * @param string $name
+     * @return void
      */
-    public function registerServiceProviders();
-
+    public function addProvider($name);
+    
     /**
-     * Use to run service providers on system ready
-     *
-     * @return mixed
+     * Unregister a provider by name
+     * 
+     * @param string $name
+     * @return void
      */
-    public function runServiceProviders();
+    public function removeProvider($name);
+    
+    /**
+     * Get all providers
+     * 
+     * @return array
+     */
+    public function getProviders();
+    
+    /**
+     * Set providers
+     * 
+     * @param array $providers
+     * @return void
+     */
+    public function setProviders($providers = []);
+    
+    /**
+     * Remove all providers
+     * 
+     * @return void
+     */
+    public function removeProviders();
 }
