@@ -11,6 +11,62 @@ class Container extends DI implements Contract
      * @var array
      */
     protected $providers = [];
+
+    /**
+     * Resolved Instances
+     *
+     * @var array
+     */
+    protected $resolvedInstances = [];
+
+    /**
+     * Shared Instances
+     *
+     * @var array
+     */
+    protected $sharedInstances = [];
+
+    public function get($name, $parameters = [])
+    {
+        // Because the DI only resolve a dependency only when it is registered,
+        // so we try to bind it with itself
+        if (!$this->has($name)) {
+            $this->set($name, $name);
+        }
+        
+        $service  = $this->getService($name);
+
+        // Once this is a shared service, container will return the shared instance
+        // if it was instantiated
+        if ($service->isShared()) {
+            if (isset($this->sharedInstances[$name]) && !is_null($this->sharedInstances[$name])) {
+                return $this->sharedInstances[$name];
+            }
+        }
+
+        // If this abstract has already been resolved, there is no need to resolve again
+        // This case is only working for non-parameters
+        if ($service->isResolved()) {
+            if (isset($this->resolvedInstances[$name]) && !is_null($this->resolvedInstances[$name])) {
+                return clone($this->resolvedInstances[$name]);
+            }
+        }
+
+        // Try to resolve with dependency injection
+        $instance = parent::get($name, $parameters);
+
+        // Make it as sharable item if sharing is enabled
+        if ($service->isShared()) {
+            $this->sharedInstances[$name] = $instance;
+        }
+
+        // Mark it as resolved item for improving performance later
+        if ($service->isResolved()) {
+            $this->resolvedInstances[$name] = clone($instance);
+        }
+
+        return $instance;
+    }
     
     public function attempt($name, $definition, $shared = false)
     {
@@ -73,5 +129,4 @@ class Container extends DI implements Contract
             }
         }
     }
-
 }
