@@ -20,7 +20,7 @@ class ContainerTest extends TestCase
     /**
      * @depends testImplementedDiInterface
      */
-    public function testCanSetService($di)
+    public function testSetService($di)
     {
         $service = $di->set($this->abstractClass, $this->definitionClass);
         $this->assertInstanceOf(ServiceInterface::class, $service);
@@ -28,9 +28,9 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testCanSetService
+     * @depends testSetService
      */
-    public function testCanResolveAbstract($di)
+    public function testResolveAbstract($di)
     {
         $instance = $di->get($this->abstractClass);
         $this->assertInstanceOf($this->definitionClass, $instance);
@@ -39,7 +39,7 @@ class ContainerTest extends TestCase
     /**
      * @depends testImplementedDiInterface
      */
-    public function testCanSetSharedService($di)
+    public function testSetSharedService($di)
     {
         $service = $di->setShared($this->abstractClass, $this->definitionClass);
         $this->assertInstanceOf(ServiceInterface::class, $service);
@@ -47,9 +47,9 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testCanSetSharedService
+     * @depends testSetSharedService
      */
-    public function testCanShareService($di)
+    public function testShareService($di)
     {
         $this->assertInstanceOf($this->definitionClass, $di->getShared($this->abstractClass));
     }

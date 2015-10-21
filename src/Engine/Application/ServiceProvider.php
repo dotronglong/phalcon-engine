@@ -69,7 +69,9 @@ class ServiceProvider implements ServiceProviderContract
     {
         $this->di->setShared('session', function () {
             $session = new Session();
-            $session->start();
+            if (!$session->isStarted()) {
+                $session->start();
+            }
 
             return $session;
         });

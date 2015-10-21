@@ -1,5 +1,9 @@
 <?php namespace Engine\Tests;
 
+use Engine\DI\Contract as DI;
+use Engine\Config;
+use Phalcon\Session\AdapterInterface as SessionInterface;
+
 class GeneralTest extends TestCase
 {
     public function testFunctionEnvExists()
@@ -24,5 +28,82 @@ class GeneralTest extends TestCase
         $var_name    = 'this_is_var';
         $var_default = 'DEFAULT';
         $this->assertEquals(env($var_name, $var_default), $var_default);
+    }
+    
+    public function testFunctionDiExists()
+    {
+        $this->assertTrue(function_exists('di'));
+    }
+    
+    /**
+     * @depends testFunctionDiExists
+     */
+    public function testReturnDiInterface()
+    {
+        $di = di();
+        $this->assertInstanceOf(DI::class, $di);
+        return $di;
+    }
+    
+    public function testFunctionConfigExists()
+    {
+        $this->assertTrue(function_exists('config'));
+    }
+    
+    /**
+     * @depends testFunctionConfigExists
+     */
+    public function testSetConfig()
+    {
+        $config = new Config();
+        $this->assertInstanceOf(Config::class, $config->set('section.var', 'value'));
+        return $config;
+    }
+    
+    /**
+     * @depends testSetConfig
+     */
+    public function testGetConfig(Config $config)
+    {
+        $this->assertEquals($config->get('section.var'), 'value');
+    }
+    
+    /**
+     * @depends testSetConfig
+     */
+    public function testGetConfigWithDefaultValue(Config $config)
+    {
+        $this->assertEquals($config->get('section.var2', 'default'), 'default');
+    }
+    
+    public function testFunctionSessionExists()
+    {
+        $this->assertTrue(function_exists('session'));
+    }
+    
+    /**
+     * @depends testReturnDiInterface
+     * @depends testFunctionSessionExists
+     */
+    public function testSetSession(DI $di)
+    {
+        $di->set('session', new \Phalcon\Session\Adapter\Files);
+        $session = session();
+        $this->assertInstanceOf(SessionInterface::class, $session);
+        $session->set('var', 'value');
+        $this->assertTrue($session->has('var'));
+    }
+    
+    /**
+     * @depends testSetSession
+     */
+    public function testGetSession()
+    {
+        $this->assertEquals(session('var'), 'value');
+    }
+    
+    public function testGetSessionWithDefaultNullValue()
+    {
+        $this->assertNull(session('var_name'));
     }
 }
