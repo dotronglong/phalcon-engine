@@ -1,7 +1,9 @@
 <?php namespace Engine\DI;
 
+use Engine\Exception\InvalidInstanceException;
 use Phalcon\DI;
 use Engine\DI\Service\Factory as Service;
+use Engine\Engine;
 
 class Container extends DI implements Contract
 {
@@ -91,6 +93,7 @@ class Container extends DI implements Contract
 
     public function addProvider($name)
     {
+        // TODO: Implement addProvider() method.
         if (!isset($this->providers[$name])) {
             $this->providers[$name] = null;
         }
@@ -98,35 +101,56 @@ class Container extends DI implements Contract
 
     public function getProviders()
     {
-        if (count($this->providers)) {
-            foreach ($this->providers as $name => $provider) {
-                if (is_null($provider)) {
-                    $this->providers[$name] = new $name;
-                }
-            }
-        }
-        
+        // TODO: Implement getProviders() method.
         return $this->providers;
+    }
+
+    public function hasProvider($name)
+    {
+        // TODO: Implement hasProvider() method.
+        return array_key_exists($name, $this->providers);
     }
 
     public function removeProvider($name)
     {
-        if (isset($this->providers[$name])) {
+        // TODO: Implement removeProvider() method.
+        if ($this->hasProvider($name)) {
             unset($this->providers[$name]);
         }
     }
 
     public function removeProviders()
     {
-        $this->setProviders([]);
+        // TODO: Implement removeProviders() method.
+        $this->providers = [];
     }
 
     public function setProviders($providers = array())
     {
+        // TODO: Implement setProviders() method.
         if (is_array($providers)) {
             foreach ($providers as $name) {
                 $this->addProvider($name);
             }
         }
+    }
+
+    public function makeProviders()
+    {
+        // TODO: Implement makeProviders() method.
+        if (count($this->providers)) {
+            foreach ($this->providers as $name => $provider) {
+                if (is_null($provider)) {
+                    $provider = Engine::newInstance($name);
+                    if ($provider instanceof ServiceProvider) {
+                        $this->providers[$name] = $provider;
+                    } else {
+                        throw new InvalidInstanceException("$name must implement " . ServiceProvider::class);
+                    }
+                }
+            }
+        }
+
+        return $this->providers;
     }
 }
