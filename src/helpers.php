@@ -186,3 +186,18 @@ if ( ! function_exists('route'))
         return $static ? $url->getStatic($params) : $url->get($params);
     }
 }
+
+if ( ! function_exists('server'))
+{
+    /**
+     * Get $_SERVER value
+     * 
+     * @param string $name
+     * @param mixed $default
+     * @return string
+     */
+    function server($name, $default = true)
+    {
+        return isset($_SERVER[$name]) ? $_SERVER[$name] : $default;
+    }
+}

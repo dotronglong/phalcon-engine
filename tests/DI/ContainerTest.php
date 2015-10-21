@@ -3,8 +3,9 @@
 use Phalcon\DiInterface;
 use Phalcon\Di\ServiceInterface;
 use Engine\DI\Container as DI;
+use Engine\Tests\TestCase;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     protected $abstractClass    = 'Engine\Contracts\Config';
     protected $definitionClass  = 'Engine\Config';
