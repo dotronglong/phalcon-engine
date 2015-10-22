@@ -14,7 +14,7 @@ class ContainerTest extends TestCase
     protected $testProvider     = 'my_provider';
     protected $validProvider    = 'Engine\Application\ServiceProvider';
 
-    public function testImplementedDiInterface()
+    public function testImplementDiInterface()
     {
         $di = new DI();
         $this->assertInstanceOf(DiInterface::class, $di);
@@ -22,7 +22,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testSetService($di)
     {
@@ -41,7 +41,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testSetSharedService($di)
     {
@@ -59,7 +59,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testAddProvider($di)
     {
@@ -68,7 +68,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testRemoveProvider($di)
     {
@@ -77,7 +77,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      * @depends testRemoveProvider
      */
     public function testGetProviders($di)
@@ -88,7 +88,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testRemoveProviders($di)
     {
@@ -97,7 +97,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testSetProviders($di)
     {
@@ -106,7 +106,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @depends testImplementedDiInterface
+     * @depends testImplementDiInterface
      */
     public function testMakeProviders($di)
     {

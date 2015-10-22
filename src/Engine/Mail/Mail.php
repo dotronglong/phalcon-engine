@@ -1,6 +1,7 @@
 <?php namespace Engine\Mail;
 
-use Engine\Mail\Exception;
+use Engine\Exception\NullPointerException;
+use Engine\Exception\InvalidParameterException;
 
 defined('RN') || define('RN', "\r\n");
 
@@ -37,7 +38,7 @@ abstract class Mail
      * Errors
      * @var array
      */
-    protected $errors = []);
+    protected $errors = [];
 
     /**
      * Default Constructor
@@ -50,7 +51,7 @@ abstract class Mail
         if (isset($config['charset'])) {
             $this->setCharset($config['charset']);
         }
-        $this->addHeader('X-Mailer', 'GMS Framework Mailer');
+        $this->addHeader('X-Mailer', 'Phalcon Engine Mailer');
     }
 
     /**
@@ -73,7 +74,7 @@ abstract class Mail
 
     /**
      * Clear errors
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     protected function clearErrors()
     {
@@ -90,17 +91,17 @@ abstract class Mail
     public function getErrors($toString = false)
     {
         if ($toString) {
-            if (count($this->errors)) {
-                $errors = '';
-                foreach ($this->errors as $error) {
-                    $errors .= $error['message'] . (empty($error['errstr']) ? ' :' . $error['errstr'] : '') . (empty($error['errno']) ? ' [ERR: ' . $error['errno'] . ']' : '') . RN;
-                }
-
-                return $errors;
-            }
+            return $this->errors;
         }
+        
+        if (count($this->errors)) {
+            $errors = '';
+            foreach ($this->errors as $error) {
+                $errors .= $error['message'] . (empty($error['errstr']) ? ' :' . $error['errstr'] : '') . (empty($error['errno']) ? ' [ERR: ' . $error['errno'] . ']' : '') . RN;
+            }
 
-        return $this->errors;
+            return $errors;
+        }
     }
 
     /**
@@ -149,13 +150,13 @@ abstract class Mail
      * @param string  $email email address
      * @param string  $name name of owner's email
      * @param boolean $merge Merge with current addresses
-     * @return \Engine\Mail\Mail
+     * @return static
      * @throws Exception
      */
     private function addAddress($type, $email, $name = '', $merge = true)
     {
         if (empty($email)) {
-            throw new Exception('Email must not be empty');
+            throw new NullPointerException('Email must not be empty');
         }
         $address = [
             'email' => $email,
@@ -164,7 +165,7 @@ abstract class Mail
         if ($merge) {
             $this->data[$type][] = $address;
         } else {
-            $this->data[$type] = $address;
+            $this->data[$type]   = $address;
         }
 
         return $this;
@@ -179,7 +180,7 @@ abstract class Mail
      *
      * @param string $email
      * @param string $name
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function addTo($email, $name = '')
     {
@@ -195,7 +196,7 @@ abstract class Mail
      *
      * @param string $email
      * @param string $name
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function addCc($email, $name = '')
     {
@@ -211,7 +212,7 @@ abstract class Mail
      *
      * @param string $email
      * @param string $name
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function addBcc($email, $name = '')
     {
@@ -227,7 +228,7 @@ abstract class Mail
      *
      * @param string $email
      * @param string $name
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function addFrom($email, $name = '')
     {
@@ -243,7 +244,7 @@ abstract class Mail
      *
      * @param string $email
      * @param string $name
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function addReplyTo($email, $name = '')
     {
@@ -253,9 +254,10 @@ abstract class Mail
     }
 
     /**
-     * Add
+     * Add attachment content
+     * 
      * @param string $content
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     protected function addAttachmentContent($content, $name, $mimeType)
     {
@@ -276,7 +278,9 @@ abstract class Mail
      * @param string $name file name, set NULL to use default
      * @param string $mimeType mime type of file, set NULL to use default
      * @param int    $type Attachment's type (File or Content)
-     * @return \Engine\Mail\Mail
+     * @return static
+     * 
+     * @throws InvalidParameterException
      */
     public function addAttachment($path, $name = null, $mimeType = null, $type = self::ATTACHMENT_FILE)
     {
@@ -292,7 +296,7 @@ abstract class Mail
             if (!empty($name) && !empty($mimeType)) {
                 return $this->addAttachmentContent($path, $name, $mimeType);
             } else {
-                throw new Exception('Name and MimeType must be set if content is not a file');
+                throw new InvalidParameterException('Name and MimeType must be set if content is not a file');
             }
         }
 
@@ -308,13 +312,14 @@ abstract class Mail
      *
      * @param string $name header name
      * @param string $value header value
-     * @return \Engine\Mail\Mail
-     * @throws Exception
+     * @return static
+     * 
+     * @throws InvalidParameterException
      */
     public function addHeader($name, $value)
     {
         if (empty($name)) {
-            throw new Exception('Header\'s name must not be empty');
+            throw new InvalidParameterException('Header\'s name must not be empty');
         }
         $this->data[self::MAIL_HEADER][$name] = $value;
 
@@ -339,7 +344,7 @@ abstract class Mail
     /**
      * Clear all headers
      *
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function clearHeader()
     {
@@ -370,7 +375,7 @@ abstract class Mail
      * </code>
      *
      * @param string $charset
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function setCharset($charset)
     {
@@ -383,7 +388,7 @@ abstract class Mail
      * Set email's subject
      *
      * @param string $subject
-     * @return \Engine\Mail\Mail
+     * @return static
      * @throws Exception
      */
     public function setSubect($subject)
@@ -400,7 +405,7 @@ abstract class Mail
      * Set email body content
      * @param string $body
      * @param string $type
-     * @return \Engine\Mail\Mail
+     * @return static
      * @throws Exception
      */
     protected function setBodyContent($body, $type = self::MAIL_BODY_PLAIN)
@@ -428,7 +433,7 @@ abstract class Mail
      * Set HTML email's body
      *
      * @param string $body
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function setBodyHtml($body)
     {
@@ -439,7 +444,7 @@ abstract class Mail
      * Set Plain Text email's body
      *
      * @param string $body
-     * @return \Engine\Mail\Mail
+     * @return static
      */
     public function setBodyPlainText($body)
     {
@@ -459,8 +464,8 @@ abstract class Mail
         $charset     = $this->charset ? 'charset="' . $this->charset . '"' : '';
         $attachments = $this->attachment;
 
-        $boundary         = 'GMS_' . md5(rand()) . '_Msg';
-        $boundary_content = 'GMS_' . md5(rand()) . '_Body';
+        $boundary         = 'MAIL_' . md5(rand()) . '_Msg';
+        $boundary_content = 'MAIL_' . md5(rand()) . '_Body';
         $transferEncoding = 'quoted-printable';
 
         $this->addHeader('Mime-Version', '1.0');
