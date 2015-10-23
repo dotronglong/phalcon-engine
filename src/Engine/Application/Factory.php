@@ -4,21 +4,39 @@ use Phalcon\Mvc\Application;
 
 class Factory extends Application
 {
-    public function handle()
+    /**
+     * Handles a MVC request
+     *
+     * @param string uri
+     * @return \Phalcon\Http\ResponseInterface|boolean
+     */
+    public function handle($uri = null)
     {
+        $eventsManager = $this->getEventsManager();
+
+        // Fire application:boot event
+        if ($eventsManager->fire('application:boot', $this) === false) {
+            return false;
+        }
+
         // Run routing
         $router = di('router');
-        $router->handle();
-        $moduleName = $router->getModuleName();
-        $ctlName    = $router->getControllerName();
+        $router->handle($uri);
 
         // Pass the processed router parameters to the dispatcher
         $dispatcher = di('dispatcher');
-        $dispatcher->setControllerName("\App\Modules\\$moduleName\Controllers\\$ctlName");
-        $dispatcher->setActionName($router->getActionName());
-        $dispatcher->setParams($router->getParams());
+
+        // Fire application:beforeDispatch event
+        if ($eventsManager->fire('application:beforeDispatch', $this, $dispatcher) === false) {
+            return false;
+        }
 
         // Dispatch the request
         $dispatcher->dispatch();
+
+        // Fire application:afterDispatch event
+        if ($eventsManager->fire('application:afterDispatch', $this, $dispatcher) === false) {
+            return false;
+        }
     }
 }

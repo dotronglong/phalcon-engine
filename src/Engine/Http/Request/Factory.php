@@ -2,7 +2,7 @@
 
 use Phalcon\Http\Request;
 
-class Factory extends Request
+class Factory extends Request implements Contract
 {
 
 }

@@ -8,4 +8,11 @@ use Serializable;
 interface Contract extends EntityInterface, ModelInterface, ResultInterface,
                            Serializable
 {
+    /**
+     * Get table's name
+     *
+     * @see \Phalcon\Mvc\Model::getSource()
+     * @return string
+     */
+    public function getTable();
 }

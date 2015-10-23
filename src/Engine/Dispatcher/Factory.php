@@ -1,11 +1,33 @@
 <?php namespace Engine\Dispatcher;
 
 use Phalcon\Mvc\Dispatcher;
+use Engine\Http\HasRequest;
 
-class Factory extends Dispatcher
+class Factory extends Dispatcher implements Contract
 {
+    use HasRequest;
+
+    /**
+     * Preparing for dispatching
+     *
+     * @return void
+     */
+    protected function preDispatch()
+    {
+        $router     = $this->request->getRouter();
+        $moduleName = $router->getModuleName();
+        $ctlName    = $router->getControllerName();
+
+        $this->setControllerName("\App\Modules\\$moduleName\Controllers\\$ctlName");
+        $this->setActionName($router->getActionName());
+        $this->setParams($router->getParams());
+    }
+
     public function dispatch()
     {
+        // Run pre-dispatch
+        $this->preDispatch();
+
         // Dispatch loop
         $finished = false;
         while (!$finished) {
@@ -13,9 +35,11 @@ class Factory extends Dispatcher
             $finished = true;
 
             $controllerClass = $this->getControllerName() . "Controller";
+            $actionName      = $this->getActionName();
+            $params          = $this->getParams();
 
             // Instantiating the controller class via DI Factory
-            $controller = di($controllerClass);
+            $controller      = $this->getDI()->get($controllerClass);
 
             // Execute the action
             call_user_func_array(array($controller, $actionName . "Action"), $params);

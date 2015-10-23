@@ -1,6 +1,6 @@
 <?php namespace Engine\DI;
 
-use Contract as DI;
+use Engine\DI\Contract as DI;
 
 interface ServiceProvider
 {
