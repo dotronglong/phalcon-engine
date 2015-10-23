@@ -25,4 +25,9 @@ class TestCase extends \PHPUnit_Framework_TestCase
             return $this->assertInstanceOf($exception, $e);
         }
     }
+    
+    public function assertClassHasMethod($method_name, $object)
+    {
+        $this->assertTrue(method_exists($object, $method_name));
+    }
 }

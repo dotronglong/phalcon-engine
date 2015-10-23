@@ -1,9 +1,9 @@
-<?php namespace Engine\Tests\Io\File;
+<?php namespace Engine\Tests\IO\File;
 
 use Engine\Tests\TestCase;
-use Engine\Io\File\Factory as File;
-use Engine\Io\File\Parser\Manager as ParseManager;
-use Engine\Exception\Io\FileNotFoundException;
+use Engine\IO\File\Factory as File;
+use Engine\IO\File\Parser\Manager as ParseManager;
+use Engine\Exception\IO\FileNotFoundException;
 
 class FileTest extends TestCase
 {
@@ -14,15 +14,15 @@ class FileTest extends TestCase
         return __DIR__ . '/' . $this->filePath;
     }
 
-    public function testImplementFileContract()
+    public function testImplementContract()
     {
         $file = new File();
-        $this->assertInstanceOf(\Engine\Io\File\Contract::class, $file);
+        $this->assertInstanceOf(\Engine\IO\File\Contract::class, $file);
         return $file;
     }
     
     /**
-     * @depends testImplementFileContract
+     * @depends testImplementContract
      */
     public function testSetGetPath()
     {
@@ -33,7 +33,7 @@ class FileTest extends TestCase
     }
     
     /**
-     * @depends testImplementFileContract
+     * @depends testImplementContract
      */
     public function testProcessFile(File $file)
     {
@@ -74,8 +74,8 @@ class FileTest extends TestCase
     public function testGetFileParser(File $file)
     {
         $parser = ParseManager::getParser($file);
-        $this->assertInstanceOf(\Engine\Io\File\Parser\Contract::class, $parser);
-        $this->assertInstanceOf(\Engine\Io\File\Parser\Csv::class, $parser);
+        $this->assertInstanceOf(\Engine\IO\File\Parser\Contract::class, $parser);
+        $this->assertInstanceOf(\Engine\IO\File\Parser\Csv::class, $parser);
     }
     
     /**

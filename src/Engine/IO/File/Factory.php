@@ -1,9 +1,9 @@
-<?php namespace Engine\Io\File;
+<?php namespace Engine\IO\File;
 
-use Engine\Io\File\Parser\Contract as Parser;
-use Engine\Io\File\Parser\Manager  as ParseManager;
-use Engine\Exception\Io\FileNotFoundException;
-use Engine\Exception\Io\AccessDeniedException;
+use Engine\IO\File\Parser\Contract as Parser;
+use Engine\IO\File\Parser\Manager  as ParseManager;
+use Engine\Exception\IO\FileNotFoundException;
+use Engine\Exception\IO\AccessDeniedException;
 
 class Factory implements Contract
 {

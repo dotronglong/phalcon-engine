@@ -1,6 +1,7 @@
 <?php namespace Engine\Mail;
 
-use Engine\Mail\Exception;
+use Engine\Exception\Io\ConnectionFailedException;
+use Engine\Mail\Factory as Mail;
 
 class Smtp extends Mail
 {
@@ -116,7 +117,7 @@ class Smtp extends Mail
      * Get Debug's Messages
      * @return string|array
      */
-    public function getDebugMessages($toString = true)
+    protected function getDebugMessages($toString = true)
     {
         if (!$toString) {
             return $this->debugMessages;
@@ -153,7 +154,7 @@ class Smtp extends Mail
      * @param mixed  $default
      * @return mixed
      */
-    public function getConnectionInfo($name = null, $default = null)
+    protected function getConnectionInfo($name = null, $default = null)
     {
         return $name === null ? $this->connectionInfo : (isset($this->connectionInfo[$name]) ? $this->connectionInfo[$name] : $default);
     }
@@ -162,10 +163,10 @@ class Smtp extends Mail
      * Is connected to SMTP server or not
      * @return type
      */
-    public function isConnected($throw = false)
+    protected function isConnected($throw = false)
     {
         if ($throw && !$this->connection) {
-            throw new Exception('There is no connection to SMTP Server');
+            throw new ConnectionFailedException('There is no connection to SMTP Server');
         } else if ($this->allowDebug && !$this->connection) {
             return $this->addError('There is no connection to SMTP Server');
         }
@@ -173,7 +174,7 @@ class Smtp extends Mail
         return $this->connection ? true : false;
     }
 
-    public function connect()
+    protected function connect()
     {
         if ($this->isConnected()) {
             return $this->addError('Already connected to SMTP server');
@@ -232,7 +233,7 @@ class Smtp extends Mail
      * @param string $realm The auth realm for NTLM, ignore in this version
      * @return boolean true if succes, false if otherwise
      */
-    public function authenticate($authType = self::AUTH_LOGIN, $realm = '')
+    protected function authenticate($authType = self::AUTH_LOGIN, $realm = '')
     {
         $user     = $this->getConfig('user');
         $pwd      = $this->getConfig('pwd');
@@ -453,6 +454,8 @@ class Smtp extends Mail
 
     public function send()
     {
+        $this->addHeader('X-Mailer', 'Phalcon Engine Mailer');
+        
         if (!$this->isConnected()) {
             if (!$this->connect()) {
                 return $this->quit();
@@ -502,7 +505,7 @@ class Smtp extends Mail
         }
         $this->addHeader('Subject', $this->subject);
 
-        $body = $this->buildBody();
+        $body = $this->build();
         $data = $this->addContent('Date: ' . date('d M y H:i:s'))
             ->addContent('From: ' . $this->toString(self::MAIL_FROM))
             ->addContent('To: ' . $this->toString(self::MAIL_TO))

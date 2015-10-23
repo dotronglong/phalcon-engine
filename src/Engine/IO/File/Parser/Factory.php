@@ -1,4 +1,4 @@
-<?php namespace Engine\Io\File\Parser;
+<?php namespace Engine\IO\File\Parser;
 
 class Factory implements Contract
 {

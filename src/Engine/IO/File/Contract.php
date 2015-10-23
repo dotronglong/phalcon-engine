@@ -1,7 +1,7 @@
-<?php namespace Engine\Io\File;
+<?php namespace Engine\IO\File;
 
-use Engine\Io\File\Parser\Contract as Parser;
-use Engine\Exception\Io\FileNotFoundException;
+use Engine\IO\File\Parser\Contract as Parser;
+use Engine\Exception\IO\FileNotFoundException;
 
 interface Contract
 {    

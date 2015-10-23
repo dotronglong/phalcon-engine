@@ -5,23 +5,8 @@ use Engine\Exception\InvalidParameterException;
 
 defined('RN') || define('RN', "\r\n");
 
-abstract class Mail
+abstract class Factory implements Contract
 {
-    const MAIL_TO         = 'to';
-    const MAIL_CC         = 'cc';
-    const MAIL_BCC        = 'bcc';
-    const MAIL_FROM       = 'from';
-    const MAIL_REPLY_TO   = 'reply_to';
-    const MAIL_SUBJECT    = 'subject';
-    const MAIL_HEADER     = 'header';
-    const MAIL_CHARSET    = 'charset';
-    const MAIL_BODY_HTML  = 'body_html';
-    const MAIL_BODY_PLAIN = 'body_plain';
-    const MAIL_ATTACHMENT = 'attachment';
-
-    const ATTACHMENT_FILE    = 1;
-    const ATTACHMENT_CONTENT = 2;
-
     /**
      * Mail Configuration
      * @var array
@@ -40,10 +25,6 @@ abstract class Mail
      */
     protected $errors = [];
 
-    /**
-     * Default Constructor
-     * @param array $config
-     */
     public function __construct($config = [])
     {
         $this->config = $config;
@@ -51,75 +32,64 @@ abstract class Mail
         if (isset($config['charset'])) {
             $this->setCharset($config['charset']);
         }
-        $this->addHeader('X-Mailer', 'Phalcon Engine Mailer');
     }
 
-    /**
-     * Add an error to queue
-     * @param string $message error's message
-     * @param string $errstr error's content
-     * @param int    $errno error's number identity
-     * @return boolean
-     */
-    protected function addError($message, $errstr = null, $errno = null)
+    public function __isset($name)
     {
-        $this->errors[] = [
-            'message' => $message,
-            'errstr'  => $errstr,
-            'errno'   => $errno
-        ];
-
-        return false;
+        return isset($this->data[$name]);
     }
 
-    /**
-     * Clear errors
-     * @return static
-     */
-    protected function clearErrors()
+    public function __get($name)
+    {
+        return isset($this->data[$name]) ? $this->data[$name] : (in_array($name, [
+            self::MAIL_TO,
+            self::MAIL_BCC,
+            self::MAIL_CC
+        ]) ? [] : null);
+    }
+    
+    public function removeErrors()
     {
         $this->errors = [];
 
         return $this;
     }
-
-    /**
-     * Get errors
-     * @param boolean $toString return string instead of array
-     * @return string|array
-     */
+    
     public function getErrors($toString = false)
     {
-        if ($toString) {
+        if (!$toString) {
             return $this->errors;
         }
         
+        $errors = '';
         if (count($this->errors)) {
-            $errors = '';
             foreach ($this->errors as $error) {
                 $errors .= $error['message'] . (empty($error['errstr']) ? ' :' . $error['errstr'] : '') . (empty($error['errno']) ? ' [ERR: ' . $error['errno'] . ']' : '') . RN;
             }
-
-            return $errors;
         }
+        return $errors;
+    }
+    
+    public function addError($message, $err_no = null, $err_str = null)
+    {
+        $this->errors[] = [
+            'message' => $message,
+            'errno'   => $err_no,
+            'errstr'  => $err_str
+        ];
+        
+        return $this;
     }
 
-    /**
-     * Get / Set Configuration
-     *
-     * <code>
-     * $mail->setConfig([
-     *     'host' => 'host_name',
-     *     'user' => 'user_name',
-     *     [...]
-     * ]); // set configuration
-     *
-     * $mail->setConfig('host', 'host_name'); // set configuration by name
-     * </code>
-     *
-     * @param mixed $config
-     * @param mixed $value
-     */
+    public function getConfig($name = null, $default = null)
+    {
+        if ($name === null) {
+            return $this->config;
+        }
+
+        return isset($this->config[$name]) ? $this->config[$name] : $default;
+    }
+    
     public function setConfig($config = null, $value = null)
     {
         if (is_array($config)) {
@@ -129,31 +99,16 @@ abstract class Mail
         }
     }
 
-    /**
-     * Get configuration
-     * @param string $name
-     * @param mixed  $default
-     * @return mixed
-     */
-    public function getConfig($name = null, $default = null)
+    public function setConfigArray($config, $merge = true)
     {
-        if ($name === null) {
-            return $this->config;
+        if ($merge) {
+            $this->config = array_merge($this->config, $config);
+        } else {
+            $this->config = $config;
         }
-
-        return isset($this->config[$name]) ? $this->config[$name] : $default;
     }
-
-    /**
-     * Add an address
-     * @param string  $type address's type
-     * @param string  $email email address
-     * @param string  $name name of owner's email
-     * @param boolean $merge Merge with current addresses
-     * @return static
-     * @throws Exception
-     */
-    private function addAddress($type, $email, $name = '', $merge = true)
+    
+    protected function addAddress($type, $email, $name = '', $merge = true)
     {
         if (empty($email)) {
             throw new NullPointerException('Email must not be empty');
@@ -170,95 +125,34 @@ abstract class Mail
 
         return $this;
     }
-
-    /**
-     * Add an email address to TO section
-     *
-     * <code>
-     * $mailer->addTo('abc@domain.com', 'ABC');
-     * </code>
-     *
-     * @param string $email
-     * @param string $name
-     * @return static
-     */
+    
     public function addTo($email, $name = '')
     {
         return $this->addAddress(self::MAIL_TO, $email, $name);
     }
-
-    /**
-     * Add an email address to CC section
-     *
-     * <code>
-     * $mailer->addCc('abc@domain.com', 'ABC');
-     * </code>
-     *
-     * @param string $email
-     * @param string $name
-     * @return static
-     */
+    
     public function addCc($email, $name = '')
     {
         return $this->addAddress(self::MAIL_CC, $email, $name);
     }
-
-    /**
-     * Add an email address to BCC section
-     *
-     * <code>
-     * $mailer->addBcc('abc@domain.com', 'ABC');
-     * </code>
-     *
-     * @param string $email
-     * @param string $name
-     * @return static
-     */
+    
     public function addBcc($email, $name = '')
     {
         return $this->addAddress(self::MAIL_BCC, $email, $name);
     }
-
-    /**
-     * Add an email address to FROM section
-     *
-     * <code>
-     * $mailer->addFrom('abc@domain.com', 'ABC');
-     * </code>
-     *
-     * @param string $email
-     * @param string $name
-     * @return static
-     */
+    
     public function addFrom($email, $name = '')
     {
         return $this->addAddress(self::MAIL_FROM, $email, $name, false);
     }
-
-    /**
-     * Add an email address to REPLY-TO section
-     *
-     * <code>
-     * $mailer->addReplyTo('abc@domain.com', 'ABC');
-     * </code>
-     *
-     * @param string $email
-     * @param string $name
-     * @return static
-     */
+    
     public function addReplyTo($email, $name = '')
     {
         $this->data[self::MAIL_REPLY_TO] = null;
 
         return $this->addAddress(self::MAIL_REPLY_TO, $email, $name);
     }
-
-    /**
-     * Add attachment content
-     * 
-     * @param string $content
-     * @return static
-     */
+    
     protected function addAttachmentContent($content, $name, $mimeType)
     {
         $content = 'Content-Type: ' . $mimeType . '; name="' . $name . '"' . RN .
@@ -270,18 +164,7 @@ abstract class Mail
 
         return $this;
     }
-
-    /**
-     * Add file into email as attachment
-     *
-     * @param string $path physical path to the file or content of file
-     * @param string $name file name, set NULL to use default
-     * @param string $mimeType mime type of file, set NULL to use default
-     * @param int    $type Attachment's type (File or Content)
-     * @return static
-     * 
-     * @throws InvalidParameterException
-     */
+    
     public function addAttachment($path, $name = null, $mimeType = null, $type = self::ATTACHMENT_FILE)
     {
         if ($type === self::ATTACHMENT_FILE) {
@@ -302,20 +185,7 @@ abstract class Mail
 
         return $this;
     }
-
-    /**
-     * Add predefined header to email
-     *
-     * <code>
-     * $mail->addHeader('Content-Type', 'text/plain'); // Content-Type: text/plain \r\n
-     * </code>
-     *
-     * @param string $name header name
-     * @param string $value header value
-     * @return static
-     * 
-     * @throws InvalidParameterException
-     */
+    
     public function addHeader($name, $value)
     {
         if (empty($name)) {
@@ -325,127 +195,70 @@ abstract class Mail
 
         return $this;
     }
-
-    /**
-     * Check if a header name has been registered
-     *
-     * <code>
-     * $mail->hasHeader('Content-Type');
-     * </code>
-     *
-     * @param string $name
-     * @return boolean
-     */
+    
+    public function removeHeader($name)
+    {
+        if (isset($this->data[self::MAIL_HEADER][$name])) {
+            unset($this->data[self::MAIL_HEADER][$name]);
+        }
+        
+        return $this;
+    }
+    
+    public function removeHeaders()
+    {
+        $this->data[self::MAIL_HEADER] = [];
+    }
+    
     public function hasHeader($name)
     {
         return isset($this->data[self::MAIL_HEADER][$name]);
     }
-
-    /**
-     * Clear all headers
-     *
-     * @return static
-     */
+    
     public function clearHeader()
     {
         $this->data[self::MAIL_HEADER] = null;
 
         return $this;
     }
-
-    public function __isset($name)
-    {
-        return isset($this->data[$name]);
-    }
-
-    public function __get($name)
-    {
-        return isset($this->data[$name]) ? $this->data[$name] : (in_array($name, [
-            self::MAIL_TO,
-            self::MAIL_BCC,
-            self::MAIL_CC
-        ]) ? [] : null);
-    }
-
-    /**
-     * Set email character set
-     *
-     * <code>
-     * $mail->setCharset('utf-8');
-     * </code>
-     *
-     * @param string $charset
-     * @return static
-     */
+    
     public function setCharset($charset)
     {
         $this->data[self::MAIL_CHARSET] = $charset;
 
         return $this;
     }
-
-    /**
-     * Set email's subject
-     *
-     * @param string $subject
-     * @return static
-     * @throws Exception
-     */
+    
     public function setSubect($subject)
     {
         if (empty($subject)) {
-            throw new Exception('Subject must not be empty');
+            throw new InvalidParameterException('Subject must not be empty');
         }
         $this->data[self::MAIL_SUBJECT] = $subject;
 
         return $this;
     }
-
-    /**
-     * Set email body content
-     * @param string $body
-     * @param string $type
-     * @return static
-     * @throws Exception
-     */
+    
     protected function setBodyContent($body, $type = self::MAIL_BODY_PLAIN)
     {
         if (empty($body)) {
-            throw new Exception('Body must not be empty');
+            throw new InvalidParameterException('Body must not be empty');
         }
         $this->data[$type] = $body;
 
         return $this;
     }
-
-    /**
-     * An alias of setBodyContent
-     *
-     * @see GMS_Mail_Abstract::setBodyContent
-     * @param string $body
-     */
-    public function setBody($body)
+    
+    protected function setBody($body)
     {
         return $this->setBodyContent($body);
     }
-
-    /**
-     * Set HTML email's body
-     *
-     * @param string $body
-     * @return static
-     */
+    
     public function setBodyHtml($body)
     {
         return $this->setBodyContent($body, self::MAIL_BODY_HTML);
     }
-
-    /**
-     * Set Plain Text email's body
-     *
-     * @param string $body
-     * @return static
-     */
+    
     public function setBodyPlainText($body)
     {
         return $this->setBodyContent(strip_tags($body), self::MAIL_BODY_PLAIN);
@@ -456,7 +269,7 @@ abstract class Mail
      *
      * @return string
      */
-    public function buildBody()
+    protected function build()
     {
         $bodyPlain = $this->body_plain;
         $bodyHtml  = str_replace('=', '=3D', $this->body_html);
@@ -496,16 +309,14 @@ abstract class Mail
 
         return $body;
     }
-
-    /**
-     * Get string values of Mail's data
-     * @param string $type
-     * @param array  $args
-     * @return string
-     */
+    
     public function toString($type, $args = [])
     {
         $return = '';
+        if (!isset($this->data[$type])) {
+            return $return;
+        }
+        
         switch ($type) {
             case self::MAIL_TO:
             case self::MAIL_CC:
@@ -548,33 +359,9 @@ abstract class Mail
 
         return $return;
     }
-
-    /**
-     * Test email's configuration
-     *
-     * @return boolean TRUE if the configuration is correct, FALSE if otherwise
-     */
+    
     public function test()
     {
         return true;
     }
-
-    /**
-     * Send mail
-     *
-     * <code>
-     * $mailer->addTo('email', 'name')
-     *        ->addBcc('email', 'name')
-     *        ->addCc('email', 'name')
-     *        ->addFrom('email', 'name')
-     *        ->setSubect('This is email\'s subject')
-     *        ->setBodyPlainText('This is plain text body')
-     *        ->setBodyHtml('<strong>This is HTML body</strong>')
-     *        ->addAttachment('path_to_attachment')
-     *        ->send();
-     * </code>
-     *
-     * @return boolean TRUE if success, FALSE if otherwise
-     */
-    abstract public function send();
 }

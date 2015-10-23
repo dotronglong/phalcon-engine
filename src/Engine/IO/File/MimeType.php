@@ -1,4 +1,4 @@
-<?php namespace Engine\Io\File;
+<?php namespace Engine\IO\File;
 
 class MimeType
 {

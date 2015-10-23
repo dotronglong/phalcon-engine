@@ -1,5 +1,7 @@
 <?php namespace Engine\Mail;
 
+use Engine\Mail\Factory as Mail;
+
 class Simple extends Mail
 {
     public function send()
@@ -32,6 +34,6 @@ class Simple extends Mail
 
         $header = $this->toString(self::MAIL_HEADER);
 
-        return mail($to, $subject, $this->buildBody(), $header);
+        return mail($to, $subject, $this->build(), $header);
     }
 }

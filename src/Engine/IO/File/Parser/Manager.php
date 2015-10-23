@@ -1,7 +1,7 @@
-<?php namespace Engine\Io\File\Parser;
+<?php namespace Engine\IO\File\Parser;
 
-use Engine\Io\File\Contract as File;
-use Engine\Exception\Io\InvalidContentException;
+use Engine\IO\File\Contract as File;
+use Engine\Exception\IO\InvalidContentException;
 use Engine\Engine;
 
 class Manager
@@ -15,7 +15,7 @@ class Manager
      * Get appropriate parser
      * 
      * @param File $file
-     * @return \Engine\Io\File\Parser\Contract
+     * @return \Engine\IO\File\Parser\Contract
      * @throws InvalidContentException
      */
     public static function getParser(File $file)

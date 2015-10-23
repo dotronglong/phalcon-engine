@@ -23,5 +23,8 @@
             "Engine\\": "src/Engine",
             "Engine\\Tests\\": "tests"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.0"
     }
 }
