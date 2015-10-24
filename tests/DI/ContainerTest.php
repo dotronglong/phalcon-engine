@@ -2,7 +2,7 @@
 
 use Phalcon\DiInterface;
 use Phalcon\Di\ServiceInterface;
-use Engine\DI\Container as DI;
+use Engine\DI\Factory as DI;
 use Engine\Tests\TestCase;
 use Engine\DI\ServiceProvider;
 use Engine\Exception\ClassNotFoundException;

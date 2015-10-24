@@ -5,7 +5,7 @@ use Phalcon\DI;
 use Engine\DI\Service\Factory as Service;
 use Engine\Engine;
 
-class Container extends DI implements Contract
+class Factory extends DI implements Contract
 {
     /**
      * Providers
