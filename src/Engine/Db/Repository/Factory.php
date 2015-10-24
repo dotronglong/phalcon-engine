@@ -1,6 +1,5 @@
 <?php namespace Engine\Db\Repository;
 
-use Engine\Db\Contract as Db;
 use Engine\Db\Model\Contract as Model;
 use Phalcon\Mvc\Model\ManagerInterface as ModelsManager;
 
@@ -40,10 +39,12 @@ class Factory implements Contract
         return $this->model;
     }
 
-    public function query()
+    public function getBuilder()
     {
-        // TODO: Implement query() method.
-        return Db::newQuery($this->getModel());
-    }
+        // TODO: Implement getBuilder() method.
+        $builder = $this->getModelsManager()->createBuilder();
+        $builder->from($this->getModel());
 
+        return $builder;
+    }
 }

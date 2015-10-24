@@ -2,7 +2,7 @@
 
 use Phalcon\Http\Response;
 
-class Factory extends Response
+class Factory extends Response implements Contract
 {
 
 }

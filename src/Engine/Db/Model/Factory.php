@@ -1,51 +1,27 @@
 <?php namespace Engine\Db\Model;
 
-use Engine\Db\Query\Contract as Query;
 use Phalcon\Mvc\Model;
-use Phalcon\Mvc\Model\Behavior\Timestampable;
-use Phalcon\Mvc\Model\Behavior\SoftDelete;
 
 class Factory extends Model implements Contract
 {
-    /**
-     * Use Timestamp or not
-     *
-     * @var bool
-     */
-    protected $useTimestamp = true;
+    use HasTimestamp, HasSoftDeletes;
 
     /**
-     * Use SoftDeletes or not
+     * The attributes that should be hidden for arrays.
      *
-     * @var bool
+     * @var array
      */
-    protected $useSoftDeletes = true;
+    protected $hidden;
+
+    /**
+     * The attributes that should be visible in arrays.
+     *
+     * @var array
+     */
+    protected $visible;
 
     final public function initialize()
     {
-        if ($this->useTimestamp) {
-            $this->addBehavior(new Timestampable([
-                'onCreate' => [
-                    'field'  => [
-                        'created_at',
-                        'updated_at'
-                    ],
-                    'format' => 'Y-m-d H:i:s'
-                ],
-                'onUpdate' => [
-                    'field'  => 'updated_at',
-                    'format' => 'Y-m-d H:i:s'
-                ]
-            ]));
-        }
-
-        if ($this->useSoftDeletes) {
-            $this->addBehavior(new SoftDelete([
-                'field' => 'deleted_at',
-                'value' => date('Y-m-d H:i:s')
-            ]));
-        }
-
         // Set default connection service
         $this->setConnectionService('db');
 
@@ -67,5 +43,26 @@ class Factory extends Model implements Contract
     {
         // TODO: Implement getTable() method.
         return $this->getSource();
+    }
+
+    public function toArray($columns = null)
+    {
+        if (is_null($columns) && is_array($this->visible)) {
+            // Only show the visible columns
+            $columns = $this->visible;
+        }
+
+        $attributes = parent::toArray($columns);
+
+        if (is_null($columns) && is_array($this->hidden) && count($attributes)) {
+            // Only show columns which have not been hidden
+            foreach($attributes as $key => $value) {
+                if (in_array($key, $this->hidden)) {
+                    unset($attributes[$key]);
+                }
+            }
+        }
+
+        return $attributes;
     }
 }

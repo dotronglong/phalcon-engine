@@ -2,7 +2,7 @@
 
 use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\Mvc\Model\ManagerInterface as ModelsManager;
-use Engine\Db\Query\Contract as Query;
+use Engine\Db\Query\Builder\Contract as QueryBuilder;
 use Engine\Db\Model\Contract as Model;
 
 interface Contract extends InjectionAwareInterface
@@ -23,11 +23,11 @@ interface Contract extends InjectionAwareInterface
     public function getModelsManager();
 
     /**
-     * Get Query
+     * Get a new instance of Builder which is suitable for Model
      *
-     * @return Query
+     * @return QueryBuilder
      */
-    public function query();
+    public function getBuilder();
 
     /**
      * Set Model

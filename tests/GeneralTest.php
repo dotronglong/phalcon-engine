@@ -101,7 +101,10 @@ class GeneralTest extends TestCase
     {
         $this->assertEquals(session('var'), 'value');
     }
-    
+
+    /**
+     * @depends testSetSession
+     */
     public function testGetSessionWithDefaultNullValue()
     {
         $this->assertNull(session('var_name'));
