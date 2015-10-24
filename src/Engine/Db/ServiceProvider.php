@@ -6,14 +6,35 @@ use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\Adapter\Pdo\Oracle;
 use Phalcon\Db\Adapter\Pdo\Postgresql;
 use Phalcon\Db\Adapter\Pdo\Sqlite;
+use Phalcon\Mvc\Model\Manager as ModelsManager;
+use Engine\Db\Query\Contract as QueryContract;
+use Engine\Db\Query\Factory as Query;
+use Engine\Db\Query\Builder\Contract as QueryBuilderContract;
+use Engine\Db\Query\Builder\Factory as QueryBuilder;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    protected $di;
 
     public function boot(DI $di)
     {
         // TODO: Implement boot() method.
-        $di->setShared('db', function() {
+        $this->di = $di;
+
+        $this->registerDb();
+        $this->registerModel();
+        $this->registerQuery();
+        $this->registerQueryBuilder();
+    }
+
+    public function ready()
+    {
+        // TODO: Implement ready() method.
+    }
+
+    protected function registerDb()
+    {
+        $this->di->setShared('db', function() {
             $driver = env('DB_DRIVER', 'mysql');
             $config = [
                 'host'       => env('DB_HOST'),
@@ -44,8 +65,20 @@ class ServiceProvider implements ServiceProviderContract
         });
     }
 
-    public function ready()
+    protected function registerModel()
     {
-        // TODO: Implement ready() method.
+        $this->di->setShared('modelsManager', function() {
+            return new ModelsManager();
+        });
+    }
+
+    protected function registerQuery()
+    {
+        $this->di->set(QueryContract::class, Query::class);
+    }
+
+    protected function registerQueryBuilder()
+    {
+        $this->di->set(QueryBuilderContract::class, QueryBuilder::class);
     }
 }

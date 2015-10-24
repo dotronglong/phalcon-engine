@@ -1,23 +1,19 @@
-<?php namespace Engine;
+<?php namespace Engine\Config;
 
 use Engine\Exception\InvalidParameterException;
 
-class Config
+class Factory implements Contract
 {
     /**
      * @var array
      */
     protected $data = [];
 
-    /**
-     * Get configuration
-     *
-     * @param string $name
-     * @param null   $default
-     * @return mixed
-     *
-     * @throws InvalidParameterException
-     */
+    public function __construct($config = [])
+    {
+        $this->sets($config);
+    }
+
     public function get($name, $default = null)
     {
         $args = explode('.', $name);
@@ -36,13 +32,6 @@ class Config
         return isset($this->data[$scope][$name]) ? $this->data[$scope][$name] : $default;
     }
 
-    /**
-     * Set configuration
-     *
-     * @param string $name
-     * @param mixed  $value
-     * @return static
-     */
     public function set($name, $value = null)
     {
         if (is_array($name)) {
@@ -92,7 +81,9 @@ class Config
 
     protected function loadScope($scope)
     {
-        $config = require PATH_APP_CONFIG . "/$scope.php";
-        $this->data[$scope] = $config;
+        if (defined('PATH_APP_CONFIG')) {
+            $config = require PATH_APP_CONFIG . "/$scope.php";
+            $this->data[$scope] = $config;
+        }
     }
 }

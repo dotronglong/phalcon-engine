@@ -2,13 +2,13 @@
 
 use Engine\Exception\BindingResolutionException;
 use Phalcon\Di\Service;
-use Phalcon\DiInterface;
+use Phalcon\DiInterface as DI;
 use ReflectionClass;
 use Closure;
 
 class Factory extends Service implements Contract
 {
-    public function resolve($parameters = null, DiInterface $di = null)
+    public function resolve($parameters = [], DI $di = null)
     {
         if (is_null($di)) {
             $di = di();
@@ -19,12 +19,11 @@ class Factory extends Service implements Contract
         if ($definition instanceof Closure) {
             $instance = $this->resolveClosure($parameters);
         } else {
-            $reflector = $this->getReflector();
+            $reflector  = $this->getReflector();
+            $parameters = $this->buildDependencies($di, $reflector, $parameters);
 
-            // We build the dependencies
-            $dependencies = $this->buildDependencies($di, $reflector);
-            if (count($dependencies)) {
-                $instance = $reflector->newInstanceArgs($dependencies);
+            if (count($parameters)) {
+                $instance = $reflector->newInstanceArgs(array_values($parameters));
             } else {
                 $instance = $reflector->newInstance();
             }
@@ -72,28 +71,40 @@ class Factory extends Service implements Contract
     /**
      * Build dependencies for a class' method
      * 
+     * @param DI
      * @param ReflectionClass $reflector
+     * @param array $parameters
      * @param string $name method name
      * @return array
      */
-    protected function buildDependencies(DiInterface $di, ReflectionClass $reflector, $name = '__construct')
+    protected function buildDependencies(DI $di, ReflectionClass $reflector, $parameters = [], $name = '__construct')
     {
         $dependencies = [];
         if ($reflector->hasMethod($name)) {
             $method = $reflector->getMethod($name);
             foreach ($method->getParameters() as $parameter) {
+                // Get parameter name
+                $name = $parameter->getName();
+
                 $dependency = null;
-                if ($abstract = $parameter->getClass()) {
-                    $dependency = $di->get($abstract->getName());
-                } elseif ($parameter->isArray()) {
-                    $dependency = [];
+                // Use the predefined parameter if it is set already
+                if (is_array($parameters) && isset($parameters[$name])) {
+                    $dependency = $parameters[$name];
+                } else {
+                    // Build dependency for this parameter
+                    if ($abstract = $parameter->getClass()) {
+                        $dependency = $di->get($abstract->getName());
+                    } elseif ($parameter->isArray()) {
+                        $dependency = [];
+                    }
+
+                    if ($parameter->isDefaultValueAvailable()) {
+                        $dependency = $parameter->getDefaultValue();
+                    }
                 }
 
-                if ($parameter->isDefaultValueAvailable()) {
-                    $dependency = $parameter->getDefaultValue();
-                }
-
-                $dependencies[] = $dependency;
+                // Add to dependencies
+                $dependencies[$name] = $dependency;
             }
         }
         

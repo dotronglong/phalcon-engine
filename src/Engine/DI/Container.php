@@ -28,14 +28,15 @@ class Container extends DI implements Contract
      */
     protected $sharedInstances = [];
 
-    public function get($name, $parameters = [])
+    public function get($name, $parameters = null)
     {
         // Because the DI only resolve a dependency only when it is registered,
         // so we try to bind it with itself
         if (!$this->has($name)) {
             $this->set($name, $name);
         }
-        
+
+        // Retrieve the appropriate service
         $service  = $this->getService($name);
 
         // Once this is a shared service, container will return the shared instance
@@ -47,8 +48,7 @@ class Container extends DI implements Contract
         }
 
         // If this abstract has already been resolved, there is no need to resolve again
-        // This case is only working for non-parameters
-        if ($service->isResolved()) {
+        if ($service->isResolved() && is_null($parameters)) {
             if (isset($this->resolvedInstances[$name]) && !is_null($this->resolvedInstances[$name])) {
                 return clone($this->resolvedInstances[$name]);
             }

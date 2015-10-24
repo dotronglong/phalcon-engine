@@ -1,5 +1,6 @@
 <?php namespace Engine\Db\Model;
 
+use Engine\Db\Query\Contract as Query;
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
 use Phalcon\Mvc\Model\Behavior\SoftDelete;

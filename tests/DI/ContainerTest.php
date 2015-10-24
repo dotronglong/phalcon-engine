@@ -9,8 +9,8 @@ use Engine\Exception\ClassNotFoundException;
 
 class ContainerTest extends TestCase
 {
-    protected $abstractClass    = 'Engine\Contracts\Config';
-    protected $definitionClass  = 'Engine\Config';
+    protected $abstractClass    = 'Engine\Config\Contract';
+    protected $definitionClass  = 'Engine\Config\Factory';
     protected $testProvider     = 'my_provider';
     protected $validProvider    = 'Engine\Application\ServiceProvider';
 
@@ -38,6 +38,15 @@ class ContainerTest extends TestCase
     {
         $instance = $di->get($this->abstractClass);
         $this->assertInstanceOf($this->definitionClass, $instance);
+    }
+
+    /**
+     * @depends testSetService
+     */
+    public function testResolveAbstractWithParameters($di)
+    {
+        $instance = $di->get($this->abstractClass, ['config' => ['scope.my_var' => 'my_value']]);
+        $this->assertEquals('my_value', $instance->get('scope.my_var'));
     }
 
     /**

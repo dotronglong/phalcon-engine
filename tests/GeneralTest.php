@@ -1,7 +1,7 @@
 <?php namespace Engine\Tests;
 
 use Engine\DI\Contract as DI;
-use Engine\Config;
+use Engine\Config\Factory as Config;
 use Phalcon\Session\AdapterInterface as SessionInterface;
 
 class GeneralTest extends TestCase
