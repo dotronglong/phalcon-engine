@@ -7,57 +7,57 @@ use Phalcon\DiInterface;
 interface Contract extends DiInterface
 {
     /**
-     * Add a provider by name
+     * Add a register by name
      * 
      * @param string $name
      * @return void
      */
-    public function addProvider($name);
+    public function addRegister($name);
     
     /**
-     * Remove a provider by name
+     * Remove a register by name
      * 
      * @param string $name
      * @return void
      */
-    public function removeProvider($name);
+    public function removeRegister($name);
 
     /**
-     * Check if provider's name has been added
+     * Check if register's name has been added
      *
      * @param string $name
      * @return bool
      */
-    public function hasProvider($name);
+    public function hasRegister($name);
     
     /**
-     * Get all providers
+     * Get all registers
      * 
      * @return array
      */
-    public function getProviders();
+    public function getRegisters();
     
     /**
-     * Set providers
+     * Set registers
      * 
-     * @param array $providers
+     * @param array $registers
      * @return void
      */
-    public function setProviders($providers = []);
+    public function setRegisters($registers = []);
     
     /**
-     * Remove all providers
+     * Remove all registers
      * 
      * @return void
      */
-    public function removeProviders();
+    public function removeRegisters();
 
     /**
-     * Create all instances of providers
+     * Create all instances of registers
      *
-     * @return ServiceProvider[]
+     * @return ServiceRegister[]
      * @throws ClassNotFoundException
      * @throws InvalidInstanceException
      */
-    public function makeProviders();
+    public function makeRegisters();
 }

@@ -8,11 +8,11 @@ use Engine\Engine;
 class Factory extends DI implements Contract
 {
     /**
-     * Providers
+     * Registers
      * 
      * @var array
      */
-    protected $providers = [];
+    protected $registers = [];
 
     /**
      * Resolved Instances
@@ -91,66 +91,66 @@ class Factory extends DI implements Contract
         return $this->set($name, $definition, true);
     }
 
-    public function addProvider($name)
+    public function addRegister($name)
     {
-        // TODO: Implement addProvider() method.
-        if (!isset($this->providers[$name])) {
-            $this->providers[$name] = null;
+        // TODO: Implement addRegister() method.
+        if (!isset($this->registers[$name])) {
+            $this->registers[$name] = null;
         }
     }
 
-    public function getProviders()
+    public function getRegisters()
     {
-        // TODO: Implement getProviders() method.
-        return $this->providers;
+        // TODO: Implement getRegisters() method.
+        return $this->registers;
     }
 
-    public function hasProvider($name)
+    public function hasRegister($name)
     {
-        // TODO: Implement hasProvider() method.
-        return array_key_exists($name, $this->providers);
+        // TODO: Implement hasRegister() method.
+        return array_key_exists($name, $this->registers);
     }
 
-    public function removeProvider($name)
+    public function removeRegister($name)
     {
-        // TODO: Implement removeProvider() method.
-        if ($this->hasProvider($name)) {
-            unset($this->providers[$name]);
+        // TODO: Implement removeRegister() method.
+        if ($this->hasRegister($name)) {
+            unset($this->registers[$name]);
         }
     }
 
-    public function removeProviders()
+    public function removeRegisters()
     {
-        // TODO: Implement removeProviders() method.
-        $this->providers = [];
+        // TODO: Implement removeRegisters() method.
+        $this->registers = [];
     }
 
-    public function setProviders($providers = array())
+    public function setRegisters($registers = array())
     {
-        // TODO: Implement setProviders() method.
-        if (is_array($providers)) {
-            foreach ($providers as $name) {
-                $this->addProvider($name);
+        // TODO: Implement setRegisters() method.
+        if (is_array($registers)) {
+            foreach ($registers as $name) {
+                $this->addRegister($name);
             }
         }
     }
 
-    public function makeProviders()
+    public function makeRegisters()
     {
-        // TODO: Implement makeProviders() method.
-        if (count($this->providers)) {
-            foreach ($this->providers as $name => $provider) {
-                if (is_null($provider)) {
-                    $provider = Engine::newInstance($name);
-                    if ($provider instanceof ServiceProvider) {
-                        $this->providers[$name] = $provider;
+        // TODO: Implement makeRegisters() method.
+        if (count($this->registers)) {
+            foreach ($this->registers as $name => $register) {
+                if (is_null($register)) {
+                    $register = Engine::newInstance($name);
+                    if ($register instanceof ServiceRegister) {
+                        $this->registers[$name] = $register;
                     } else {
-                        throw new InvalidInstanceException("$name must implement " . ServiceProvider::class);
+                        throw new InvalidInstanceException("$name must implement " . ServiceRegister::class);
                     }
                 }
             }
         }
 
-        return $this->providers;
+        return $this->registers;
     }
 }

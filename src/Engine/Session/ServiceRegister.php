@@ -1,16 +1,16 @@
 <?php namespace Engine\Session;
 
-use Engine\DI\ServiceProvider as ServiceProviderContract;
+use Engine\DI\ServiceRegister as ServiceRegisterContract;
 use Phalcon\Session\Adapter\Files as Session;
 use Engine\DI\HasInjection;
 
-class ServiceProvider implements ServiceProviderContract
+class ServiceRegister implements ServiceRegisterContract
 {
     use HasInjection;
 
-    public function boot()
+    public function onBoot()
     {
-        // TODO: Implement boot() method.
+        // TODO: Implement onBoot() method.
         $this->getDI()->setShared('session', function () {
             $session = new Session();
             if (!$session->isStarted()) {
@@ -21,8 +21,8 @@ class ServiceProvider implements ServiceProviderContract
         });
     }
 
-    public function ready()
+    public function onReady()
     {
-        // TODO: Implement ready() method.
+        // TODO: Implement onReady() method.
     }
 }

@@ -1,24 +1,24 @@
 <?php namespace Engine\Routing;
 
-use Engine\DI\ServiceProvider as ServiceProviderContract;
+use Engine\DI\ServiceRegister as ServiceRegisterContract;
 use Engine\Routing\Router\Factory as Router;
 use Engine\DI\HasInjection;
 
-class ServiceProvider implements ServiceProviderContract
+class ServiceRegister implements ServiceRegisterContract
 {
     use HasInjection;
 
-    public function boot()
+    public function onBoot()
     {
-        // TODO: Implement boot() method.
+        // TODO: Implement onBoot() method.
         $this->getDI()->setShared('router', function() {
             return new Router(false);
         });
     }
 
-    public function ready()
+    public function onReady()
     {
-        // TODO: Implement ready() method.
+        // TODO: Implement onReady() method.
         require PATH_FILE_ROUTES;
     }
 }

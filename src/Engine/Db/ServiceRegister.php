@@ -1,7 +1,7 @@
 <?php namespace Engine\Db;
 
 use Engine\DI\Contract as DI;
-use Engine\DI\ServiceProvider as ServiceProviderContract;
+use Engine\DI\ServiceRegister as ServiceRegisterContract;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\Adapter\Pdo\Oracle;
 use Phalcon\Db\Adapter\Pdo\Postgresql;
@@ -13,22 +13,22 @@ use Engine\Db\Query\Builder\Contract as QueryBuilderContract;
 use Engine\Db\Query\Builder\Factory as QueryBuilder;
 use Engine\DI\HasInjection;
 
-class ServiceProvider implements ServiceProviderContract
+class ServiceRegister implements ServiceRegisterContract
 {
     use HasInjection;
 
-    public function boot()
+    public function onBoot()
     {
-        // TODO: Implement boot() method.
+        // TODO: Implement onBoot() method.
         $this->registerDb();
         $this->registerModel();
         $this->registerQuery();
         $this->registerQueryBuilder();
     }
 
-    public function ready()
+    public function onReady()
     {
-        // TODO: Implement ready() method.
+        // TODO: Implement onReady() method.
     }
 
     protected function registerDb()

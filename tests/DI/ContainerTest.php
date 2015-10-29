@@ -3,15 +3,13 @@
 use Engine\DI\Contract as DiContract;
 use Engine\DI\Factory as DI;
 use Engine\Tests\TestCase;
-use Engine\DI\ServiceProvider;
+use Engine\DI\ServiceRegister;
 use Engine\Exception\ClassNotFoundException;
 
 class ContainerTest extends TestCase
 {
-    protected $abstractClass    = 'Engine\Config\Contract';
-    protected $definitionClass  = 'Engine\Config\Factory';
-    protected $testProvider     = 'my_provider';
-    protected $validProvider    = 'Engine\Application\ServiceProvider';
+    protected $testRegister     = 'my_register';
+    protected $validRegister    = 'Engine\Application\ServiceRegister';
 
     public function testImplementContract()
     {
@@ -23,62 +21,62 @@ class ContainerTest extends TestCase
     /**
      * @depends testImplementContract
      */
-    public function testAddProvider($di)
+    public function testAddRegister($di)
     {
-        $di->addProvider($this->testProvider);
-        $this->assertTrue($di->hasProvider($this->testProvider));
+        $di->addRegister($this->testRegister);
+        $this->assertTrue($di->hasRegister($this->testRegister));
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testRemoveProvider($di)
+    public function testRemoveRegister($di)
     {
-        $di->removeProvider($this->testProvider);
-        $this->assertCount(0, $di->getProviders());
+        $di->removeRegister($this->testRegister);
+        $this->assertCount(0, $di->getRegisters());
     }
 
     /**
      * @depends testImplementContract
-     * @depends testRemoveProvider
+     * @depends testRemoveRegister
      */
-    public function testGetProviders($di)
+    public function testGetRegisters($di)
     {
-        $this->assertCount(0, $di->getProviders());
-        $di->addProvider($this->testProvider);
-        $this->assertCount(1, $di->getProviders());
-    }
-
-    /**
-     * @depends testImplementContract
-     */
-    public function testRemoveProviders($di)
-    {
-        $di->removeProviders();
-        $this->assertCount(0, $di->getProviders());
+        $this->assertCount(0, $di->getRegisters());
+        $di->addRegister($this->testRegister);
+        $this->assertCount(1, $di->getRegisters());
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testSetProviders($di)
+    public function testRemoveRegisters($di)
     {
-        $di->setProviders([$this->testProvider]);
-        $this->assertCount(1, $di->getProviders());
+        $di->removeRegisters();
+        $this->assertCount(0, $di->getRegisters());
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testMakeProviders($di)
+    public function testSetRegisters($di)
+    {
+        $di->setRegisters([$this->testRegister]);
+        $this->assertCount(1, $di->getRegisters());
+    }
+
+    /**
+     * @depends testImplementContract
+     */
+    public function testMakeRegisters($di)
     {
         $this->assertException(ClassNotFoundException::class, function() use ($di) {
-            $di->makeProviders();
+            $di->makeRegisters();
         });
-        $di->removeProviders();
+        $di->removeRegisters();
 
-        $di->addProvider($this->validProvider);
-        $providers = $di->makeProviders();
-        $this->assertArrayInstanceOf(ServiceProvider::class, $providers);
+        $di->addRegister($this->validRegister);
+        $registers = $di->makeRegisters();
+        $this->assertArrayInstanceOf(ServiceRegister::class, $registers);
     }
 }

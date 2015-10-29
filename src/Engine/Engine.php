@@ -1,7 +1,7 @@
 <?php namespace Engine;
 
 use Engine\DI\Container as DI;
-use Engine\DI\ServiceProvider;
+use Engine\DI\ServiceRegister;
 use Engine\Application\Factory as Application;
 use Engine\Exception\ClassNotFoundException;
 use Engine\Exception\NullPointerException;
@@ -105,7 +105,7 @@ final class Engine
     {
         foreach (di()->getProviders() as $name => $provider) {
             if ($provider instanceof ServiceProvider) {
-                $provider->ready();
+                $provider->onReady();
             }
         }
         
