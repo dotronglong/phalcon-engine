@@ -1,7 +1,6 @@
 <?php namespace Engine\Tests\DI;
 
-use Phalcon\DiInterface;
-use Phalcon\Di\ServiceInterface;
+use Engine\DI\Contract as DiContract;
 use Engine\DI\Factory as DI;
 use Engine\Tests\TestCase;
 use Engine\DI\ServiceProvider;
@@ -17,54 +16,8 @@ class ContainerTest extends TestCase
     public function testImplementContract()
     {
         $di = new DI();
-        $this->assertInstanceOf(DiInterface::class, $di);
+        $this->assertInstanceOf(DiContract::class, $di);
         return $di;
-    }
-
-    /**
-     * @depends testImplementContract
-     */
-    public function testSetService($di)
-    {
-        $service = $di->set($this->abstractClass, $this->definitionClass);
-        $this->assertInstanceOf(ServiceInterface::class, $service);
-        return $di;
-    }
-
-    /**
-     * @depends testSetService
-     */
-    public function testResolveAbstract($di)
-    {
-        $instance = $di->get($this->abstractClass);
-        $this->assertInstanceOf($this->definitionClass, $instance);
-    }
-
-    /**
-     * @depends testSetService
-     */
-    public function testResolveAbstractWithParameters($di)
-    {
-        $instance = $di->get($this->abstractClass, ['config' => ['scope.my_var' => 'my_value']]);
-        $this->assertEquals('my_value', $instance->get('scope.my_var'));
-    }
-
-    /**
-     * @depends testImplementContract
-     */
-    public function testSetSharedService($di)
-    {
-        $service = $di->setShared($this->abstractClass, $this->definitionClass);
-        $this->assertInstanceOf(ServiceInterface::class, $service);
-        return $di;
-    }
-
-    /**
-     * @depends testSetSharedService
-     */
-    public function testShareService($di)
-    {
-        $this->assertInstanceOf($this->definitionClass, $di->getShared($this->abstractClass));
     }
 
     /**

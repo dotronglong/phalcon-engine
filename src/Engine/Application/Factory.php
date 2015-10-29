@@ -19,7 +19,7 @@ class Factory extends Application
             return false;
         }
 
-        // Run routing
+        // Handle request by router
         $router = di('router');
         $router->handle($uri);
 
