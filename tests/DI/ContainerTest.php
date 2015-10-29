@@ -9,7 +9,7 @@ use Engine\Exception\ClassNotFoundException;
 class ContainerTest extends TestCase
 {
     protected $testRegister     = 'my_register';
-    protected $validRegister    = 'Engine\Application\ServiceRegister';
+    protected $validRegister    = SampleServiceRegister::class;
 
     public function testImplementContract()
     {
@@ -21,27 +21,21 @@ class ContainerTest extends TestCase
     /**
      * @depends testImplementContract
      */
-    public function testAddRegister($di)
+    public function testAddAndRemoveRegister($di)
     {
+        $di = clone($di);
         $di->addRegister($this->testRegister);
-        $this->assertTrue($di->hasRegister($this->testRegister));
-    }
-
-    /**
-     * @depends testImplementContract
-     */
-    public function testRemoveRegister($di)
-    {
+        $this->assertCount(1, $di->getRegisters());
         $di->removeRegister($this->testRegister);
         $this->assertCount(0, $di->getRegisters());
     }
 
     /**
      * @depends testImplementContract
-     * @depends testRemoveRegister
      */
     public function testGetRegisters($di)
     {
+        $di = clone($di);
         $this->assertCount(0, $di->getRegisters());
         $di->addRegister($this->testRegister);
         $this->assertCount(1, $di->getRegisters());
@@ -50,19 +44,13 @@ class ContainerTest extends TestCase
     /**
      * @depends testImplementContract
      */
-    public function testRemoveRegisters($di)
+    public function testSetAndRemoveRegisters($di)
     {
-        $di->removeRegisters();
-        $this->assertCount(0, $di->getRegisters());
-    }
-
-    /**
-     * @depends testImplementContract
-     */
-    public function testSetRegisters($di)
-    {
+        $di = clone($di);
         $di->setRegisters([$this->testRegister]);
         $this->assertCount(1, $di->getRegisters());
+        $di->removeRegisters();
+        $this->assertCount(0, $di->getRegisters());
     }
 
     /**
@@ -70,13 +58,15 @@ class ContainerTest extends TestCase
      */
     public function testMakeRegisters($di)
     {
+        $di = clone($di);
+        $di->setRegisters([$this->testRegister]);
         $this->assertException(ClassNotFoundException::class, function() use ($di) {
             $di->makeRegisters();
         });
         $di->removeRegisters();
 
         $di->addRegister($this->validRegister);
-        $registers = $di->makeRegisters();
+        $registers = $di->makeRegisters()->getRegisters();
         $this->assertArrayInstanceOf(ServiceRegister::class, $registers);
     }
 }

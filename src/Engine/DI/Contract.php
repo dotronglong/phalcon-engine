@@ -55,7 +55,7 @@ interface Contract extends DiInterface
     /**
      * Create all instances of registers
      *
-     * @return ServiceRegister[]
+     * @return static
      * @throws ClassNotFoundException
      * @throws InvalidInstanceException
      */

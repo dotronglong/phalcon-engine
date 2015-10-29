@@ -1,5 +1,8 @@
 <?php namespace Engine\Tests;
 
+use Closure;
+use Exception;
+
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     public function assertArrayInstanceOf($class, $array)
@@ -16,12 +19,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function assertException($exception, \Closure $closure)
+    public function assertException($exception, Closure $closure)
     {
         try {
             $closure();
             return $this->assertTrue(false);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->assertInstanceOf($exception, $e);
         }
     }

@@ -151,6 +151,6 @@ class Factory extends DI implements Contract
             }
         }
 
-        return $this->registers;
+        return $this;
     }
 }
