@@ -1,20 +1,21 @@
 <?php namespace Engine\Http;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
 use Engine\Http\Request\Factory as Request;
 use Engine\Http\Response\Factory as Response;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
-        $di->setShared('request', function () {
+        $this->getDI()->setShared('request', function () {
             return new Request();
         });
-        $di->setShared('response', function() {
+        $this->getDI()->setShared('response', function() {
             return new Response();
         });
     }

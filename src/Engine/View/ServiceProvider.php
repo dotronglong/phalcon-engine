@@ -1,16 +1,17 @@
 <?php namespace Engine\View;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
 use Engine\View\Factory as View;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
-        $di->setShared('view', function() {
+        $this->getDI()->setShared('view', function() {
             return new View();
         });
     }

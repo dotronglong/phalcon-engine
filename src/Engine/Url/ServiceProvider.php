@@ -1,16 +1,17 @@
 <?php namespace Engine\Url;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
 use Phalcon\Mvc\Url;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
-        $di->setShared('url', function () {
+        $this->getDI()->setShared('url', function () {
             $protocol = stripos(server('SERVER_PROTOCOL'), 'https') === true ? 'https://' : 'http://';
             $hostname = server('HTTP_HOST');
 

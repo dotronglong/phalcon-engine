@@ -1,17 +1,18 @@
 <?php namespace Engine\Debug;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
         $allowDebug = env('APP_DEBUG', false);
         if ($allowDebug) {
-            new \Whoops\Provider\Phalcon\WhoopsServiceProvider($di);
+            new \Whoops\Provider\Phalcon\WhoopsServiceProvider($this->getDI());
         }
     }
 

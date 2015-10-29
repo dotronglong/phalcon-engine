@@ -11,16 +11,15 @@ use Engine\Db\Query\Contract as QueryContract;
 use Engine\Db\Query\Factory as Query;
 use Engine\Db\Query\Builder\Contract as QueryBuilderContract;
 use Engine\Db\Query\Builder\Factory as QueryBuilder;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
-    protected $di;
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
-        $this->di = $di;
-
         $this->registerDb();
         $this->registerModel();
         $this->registerQuery();
@@ -34,7 +33,7 @@ class ServiceProvider implements ServiceProviderContract
 
     protected function registerDb()
     {
-        $this->di->setShared('db', function() {
+        $this->getDI()->setShared('db', function() {
             $driver = env('DB_DRIVER', 'mysql');
             $config = [
                 'host'       => env('DB_HOST'),
@@ -67,18 +66,18 @@ class ServiceProvider implements ServiceProviderContract
 
     protected function registerModel()
     {
-        $this->di->setShared('modelsManager', function() {
+        $this->getDI()->setShared('modelsManager', function() {
             return new ModelsManager();
         });
     }
 
     protected function registerQuery()
     {
-        $this->di->set(QueryContract::class, Query::class);
+        $this->getDI()->set(QueryContract::class, Query::class);
     }
 
     protected function registerQueryBuilder()
     {
-        $this->di->set(QueryBuilderContract::class, QueryBuilder::class);
+        $this->getDI()->set(QueryBuilderContract::class, QueryBuilder::class);
     }
 }

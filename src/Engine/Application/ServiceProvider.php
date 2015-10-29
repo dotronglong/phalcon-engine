@@ -1,12 +1,13 @@
 <?php namespace Engine\Application;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
-
-    public function boot(DI $di)
+    use HasInjection;
+    
+    public function boot()
     {
         // TODO: Implement boot() method.
     }

@@ -1,20 +1,21 @@
 <?php namespace Engine\Dispatcher;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceProvider as ServiceProviderContract;
 use Engine\Dispatcher\Factory as Dispatcher;
 use Phalcon\Events\Manager as EventsManager;
+use Engine\DI\HasInjection;
 
 class ServiceProvider implements ServiceProviderContract
 {
+    use HasInjection;
 
-    public function boot(DI $di)
+    public function boot()
     {
         // TODO: Implement boot() method.
-        $di->setShared('dispatcher', function() use ($di) {
+        $this->getDI()->setShared('dispatcher', function() use ($this) {
             $dispatcher = new Dispatcher();
-            $dispatcher->setDI($di);
-            $eventsManager = $di->getShared('eventsManager');
+            $dispatcher->setDI($this->getDI());
+            $eventsManager = $this->getDI()->getShared('eventsManager');
             if (is_null($eventsManager)) {
                 $eventsManager = new EventsManager();
             }

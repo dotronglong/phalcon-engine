@@ -1,16 +1,15 @@
 <?php namespace Engine\DI;
 
-use Engine\DI\Contract as DI;
+use Phalcon\Di\InjectionAwareInterface;
 
-interface ServiceProvider
+interface ServiceProvider extends InjectionAwareInterface
 {
     /**
      * On system booting
      *
-     * @param DI $di
      * @return mixed
      */
-    public function boot(DI $di);
+    public function boot();
 
     /**
      * On system ready to run
