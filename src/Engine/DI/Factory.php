@@ -94,35 +94,44 @@ class Factory extends DI implements Contract
     public function addRegister($name)
     {
         // TODO: Implement addRegister() method.
-        if (!isset($this->registers[$name])) {
-            $this->registers[$name] = null;
+        if (!$this->hasRegister($name)) {
+            $this->registers[] = $name;
         }
+
+        return $this;
     }
 
     public function getRegisters()
     {
         // TODO: Implement getRegisters() method.
-        return $this->registers;
+        return is_null($this->registers) || !is_array($this->registers) ? [] : $this->registers;
     }
 
     public function hasRegister($name)
     {
         // TODO: Implement hasRegister() method.
-        return array_key_exists($name, $this->registers);
+        return in_array($name, $this->registers);
     }
 
     public function removeRegister($name)
     {
         // TODO: Implement removeRegister() method.
-        if ($this->hasRegister($name)) {
-            unset($this->registers[$name]);
+        foreach ($this->getRegisters() as $i => $register) {
+            if (is_string($register) && $register === $name) {
+                unset($this->registers[$i]);
+                break;
+            }
         }
+
+        return $this;
     }
 
     public function removeRegisters()
     {
         // TODO: Implement removeRegisters() method.
         $this->registers = [];
+
+        return $this;
     }
 
     public function setRegisters($registers = array())
@@ -133,17 +142,21 @@ class Factory extends DI implements Contract
                 $this->addRegister($name);
             }
         }
+
+        return $this;
     }
 
     public function makeRegisters()
     {
         // TODO: Implement makeRegisters() method.
         if (count($this->registers)) {
-            foreach ($this->registers as $name => $register) {
-                if (is_null($register)) {
+            $di = di();
+            foreach ($this->registers as $i => $name) {
+                if (is_string($name)) {
                     $register = Engine::newInstance($name);
                     if ($register instanceof ServiceRegister) {
-                        $this->registers[$name] = $register;
+                        $register->setDI($di);
+                        $this->registers[$i] = $register;
                     } else {
                         throw new InvalidInstanceException("$name must implement " . ServiceRegister::class);
                     }

@@ -11,9 +11,10 @@ class ServiceRegister implements ServiceRegisterContract
     public function onBoot()
     {
         // TODO: Implement onBoot() method.
-        $this->getDI()->setShared('dispatcher', function() use ($this) {
+        $di = $this->getDI();
+        $this->getDI()->setShared('dispatcher', function() use ($di) {
             $dispatcher = new Dispatcher();
-            $dispatcher->setDI($this->getDI());
+            $dispatcher->setDI($di);
 
             return $dispatcher;
         });

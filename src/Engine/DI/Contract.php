@@ -10,7 +10,7 @@ interface Contract extends DiInterface
      * Add a register by name
      * 
      * @param string $name
-     * @return void
+     * @return static
      */
     public function addRegister($name);
     
@@ -18,7 +18,7 @@ interface Contract extends DiInterface
      * Remove a register by name
      * 
      * @param string $name
-     * @return void
+     * @return static
      */
     public function removeRegister($name);
 
@@ -41,14 +41,14 @@ interface Contract extends DiInterface
      * Set registers
      * 
      * @param array $registers
-     * @return void
+     * @return static
      */
     public function setRegisters($registers = []);
     
     /**
      * Remove all registers
      * 
-     * @return void
+     * @return static
      */
     public function removeRegisters();
 
