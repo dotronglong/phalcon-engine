@@ -39,10 +39,10 @@ class ApplicationTest extends TestCase
 
     public function testHandle()
     {
-        $app = $this->setUp();
-        $uri = '/blog/add';
-
-        $response = $app->handle($uri);
-        dd($response);
+//        $app = $this->setUp();
+//        $uri = '/blog/add';
+//
+//        $response = $app->handle($uri);
+//        dd($response);
     }
 }
