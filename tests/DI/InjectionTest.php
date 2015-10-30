@@ -41,6 +41,20 @@ class InjectionTest extends TestCase
     }
 
     /**
+     * @depends testImplementContract
+     */
+    public function testResolveObject($di)
+    {
+        $di = clone($di);
+        $object = new SecondObject();
+        $object->content = 'my_content';
+        $di->set('sample', $object);
+        $instance = $di->get('sample');
+        $this->assertInstanceOf($this->secondObject, $instance);
+        $this->assertEquals('my_content', $instance->content);
+    }
+
+    /**
      * @depends testSetService
      */
     public function testResolveAbstractWithParameters($di)
