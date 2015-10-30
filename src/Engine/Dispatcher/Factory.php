@@ -17,8 +17,11 @@ class Factory extends Dispatcher implements Contract
         $router     = $this->request->getRouter();
         $moduleName = $router->getModuleName();
         $ctlName    = $router->getControllerName();
+        $resolver   = $this->getDI()->get('resolver');
 
-        $this->setControllerName("\App\Modules\\$moduleName\Controllers\\$ctlName");
+        $this->setControllerName($resolver->run('dispatch:controller', function() use ($moduleName, $ctlName) {
+            return "\\App\\Modules\\$moduleName\\Controllers\\$ctlName";
+        }, [$router]));
         $this->setActionName($router->getActionName());
         $this->setParams($router->getParams());
     }

@@ -20,6 +20,7 @@ class ApplicationTest extends TestCase
         $di->setRegisters([
             \Engine\Session\ServiceRegister::class,
             \Engine\Debug\ServiceRegister::class,
+            \Engine\Resolver\ServiceRegister::class,
             \Engine\Application\ServiceRegister::class,
             \Engine\Db\ServiceRegister::class,
             \Engine\Dispatcher\ServiceRegister::class,
