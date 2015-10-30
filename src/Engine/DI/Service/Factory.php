@@ -53,7 +53,12 @@ class Factory extends Service implements Contract
      */
     protected function getReflector()
     {
-        $reflector = new ReflectionClass($this->getDefinition());
+        try {
+            $reflector = new ReflectionClass($this->getDefinition());
+        } catch (\Exception $e) {
+            dd($this);
+        }
+
 
         // If the type is not instantiable, the developer is attempting to resolve
         // an abstract type such as an Interface of Abstract Class and there is

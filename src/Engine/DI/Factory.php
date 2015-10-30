@@ -33,7 +33,7 @@ class Factory extends DI implements Contract
         // Because the DI only resolve a dependency only when it is registered,
         // so we try to bind it with itself
         if (!$this->has($name)) {
-            $this->set($name, $name);
+            //$this->set($name, $name);
         }
 
         // Retrieve the appropriate service

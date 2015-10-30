@@ -4,6 +4,7 @@ use Engine\Tests\TestCase;
 use Engine\Application\Factory as Application;
 use Engine\DI\Factory as DI;
 use Phalcon\Events\Manager as EventsManager;
+use Engine\Routing\Router;
 
 class ApplicationTest extends TestCase
 {
@@ -33,15 +34,20 @@ class ApplicationTest extends TestCase
             $register->onBoot();
         }
 
+        $resolver = $di->get('resolver');
+        $resolver->set('dispatch:controller', function(Router $router) {
+            dd($router);
+        });
+
         return $app;
     }
 
 
     public function testHandle()
     {
-//        $app = $this->setUp();
-//        $uri = '/blog/add';
-//
+        $app = $this->setUp();
+        $uri = '/blog/add';
+
 //        $response = $app->handle($uri);
 //        dd($response);
     }
