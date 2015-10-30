@@ -59,6 +59,7 @@ class InjectionTest extends TestCase
     {
         $service = $di->setShared($this->abstractClass, $this->definitionClass);
         $this->assertInstanceOf(ServiceInterface::class, $service);
+        $this->assertTrue($service->isShared());
         return $di;
     }
 

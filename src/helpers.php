@@ -3,6 +3,9 @@
 use Phalcon\Di as DI;
 use Engine\Debug\Dumper;
 use Engine\Helper\Str;
+use Engine\Exception\ClassNotFoundException;
+use Engine\Config\Factory as Config;
+use Engine\Config\Contract as ConfigContract;
 
 if (! function_exists('d')) {
     /**
@@ -64,8 +67,7 @@ if ( ! function_exists('env'))
 
         if ($value === false) return value($default);
 
-        switch (strtolower($value))
-        {
+        switch (strtolower($value)) {
             case 'true':
             case '(true)':
                 return true;
@@ -83,8 +85,7 @@ if ( ! function_exists('env'))
                 return;
         }
 
-        if (Str::startsWith($value, '"') && Str::endsWith($value, '"'))
-        {
+        if (Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
             return substr($value, 1, -1);
         }
 
@@ -125,14 +126,24 @@ if ( ! function_exists('config'))
      */
     function config($key = null, $default = null)
     {
-        if (is_null($key)) return di('config');
-
-        if (is_array($key))
-        {
-            return di('config')->set($key);
+        try {
+            $config = di('config');
+        } catch (ClassNotFoundException $e) {
+            $config = new Config(defined('PATH_APP_CONFIG') ? PATH_APP_CONFIG : null);
+            di()->setShared('config', $config);
         }
 
-        return di('config')->get($key, $default);
+        if (is_null($key)) {
+            return $config;
+        }
+
+        if ($config instanceof ConfigContract) {
+            if (is_array($key)) {
+                return $config->set($key);
+            }
+
+            return $config->get($key, $default);
+        }
     }
 }
 

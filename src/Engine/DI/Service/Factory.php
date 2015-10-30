@@ -19,6 +19,8 @@ class Factory extends Service implements Contract
         $definition = $this->getDefinition();
         if ($definition instanceof Closure) {
             $instance = $this->resolveClosure($parameters);
+        } elseif (is_object($definition)) {
+            $instance = $definition;
         } else {
             $reflector  = $this->getReflector();
             $parameters = $this->buildDependencies($di, $reflector, $parameters);

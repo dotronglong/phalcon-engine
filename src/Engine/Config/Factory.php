@@ -9,9 +9,16 @@ class Factory implements Contract
      */
     protected $data = [];
 
-    public function __construct($config = [])
+    /**
+     * Path to folder which stores config
+     *
+     * @var string
+     */
+    protected $path;
+
+    public function __construct($path = null)
     {
-        $this->sets($config);
+        $this->path = $path;
     }
 
     public function get($name, $default = null)
@@ -81,9 +88,7 @@ class Factory implements Contract
 
     protected function loadScope($scope)
     {
-        if (defined('PATH_APP_CONFIG')) {
-            $config = require PATH_APP_CONFIG . "/$scope.php";
-            $this->data[$scope] = $config;
-        }
+        $config = require "{$this->path}/$scope.php";
+        $this->data[$scope] = $config;
     }
 }
