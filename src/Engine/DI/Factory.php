@@ -88,6 +88,7 @@ class Factory implements Contract
         // If this abstract has already been resolved, there is no need to resolve again
         if ($service->isResolved() && is_null($parameters)) {
             if (isset($this->resolvedInstances[$name]) && !is_null($this->resolvedInstances[$name])) {
+                $this->_freshInstance = true;
                 return clone($this->resolvedInstances[$name]);
             }
         }
