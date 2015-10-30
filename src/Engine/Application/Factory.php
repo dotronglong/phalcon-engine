@@ -1,6 +1,7 @@
 <?php namespace Engine\Application;
 
 use Phalcon\Mvc\Application;
+use Phalcon\Http\ResponseInterface;
 
 class Factory extends Application
 {
@@ -37,11 +38,16 @@ class Factory extends Application
         }
 
         // Dispatch the request
-        $dispatcher->dispatch();
+        $response = $dispatcher->dispatch();
+        if ($response instanceof ResponseInterface) {
+            return $response->send();
+        }
 
         // Fire application:afterDispatch event
         if ($eventsManager->fire('application:afterDispatch', $this, $dispatcher) === false) {
             return false;
         }
+
+        return $response;
     }
 }

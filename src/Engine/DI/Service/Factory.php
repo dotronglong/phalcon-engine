@@ -1,6 +1,7 @@
 <?php namespace Engine\DI\Service;
 
 use Engine\Exception\BindingResolutionException;
+use Engine\Exception\MethodNotFoundException;
 use Phalcon\Di\Service;
 use Phalcon\DiInterface as DI;
 use ReflectionClass;
@@ -53,12 +54,7 @@ class Factory extends Service implements Contract
      */
     protected function getReflector()
     {
-        try {
-            $reflector = new ReflectionClass($this->getDefinition());
-        } catch (\Exception $e) {
-            dd($this);
-        }
-
+        $reflector = new ReflectionClass($this->getDefinition());
 
         // If the type is not instantiable, the developer is attempting to resolve
         // an abstract type such as an Interface of Abstract Class and there is
@@ -82,7 +78,7 @@ class Factory extends Service implements Contract
      * @param string $name method name
      * @return array
      */
-    protected function buildDependencies(DI $di, ReflectionClass $reflector, $parameters = [], $name = '__construct')
+    protected static function buildDependencies(DI $di, ReflectionClass $reflector, $parameters = [], $name = '__construct')
     {
         $dependencies = [];
         if ($reflector->hasMethod($name)) {
@@ -114,5 +110,26 @@ class Factory extends Service implements Contract
         }
         
         return $dependencies;
+    }
+
+    public static function resolveMethod($object, $method, $parameters = null)
+    {
+        // TODO: Implement resolveMethod() method.
+        $di = di();
+        if (is_object($object)) {
+            $objectClass = get_class($object);
+        } else {
+            $objectClass = $object;
+            $object      = $di->get($objectClass);
+        }
+
+        if (!method_exists($object, $method)) {
+            throw new MethodNotFoundException("$method could not be found in $objectClass");
+        }
+
+        $reflector   = new ReflectionClass($objectClass);
+        $parameters  = self::buildDependencies($di, $reflector, $parameters, $method);
+
+        return call_user_func_array([$object, $method], $parameters);
     }
 }

@@ -1,9 +1,10 @@
 <?php namespace Engine\Dispatcher;
 
 use Phalcon\Mvc\DispatcherInterface;
+use Phalcon\Events\EventsAwareInterface;
 use Engine\Http\Request\Contract as Request;
 
-interface Contract extends DispatcherInterface
+interface Contract extends DispatcherInterface, EventsAwareInterface
 {
     /**
      * Set Request to dispatcher

@@ -47,17 +47,19 @@ class Factory implements Contract
      * @param array $parameters
      * @return mixed
      */
-    protected function simpleResolve($name, $parameters = null)
+    protected function resolve($name, $parameters = null)
     {
         if (isset($this->resolvedInstances[$name]) && is_null($parameters)) {
             return clone($this->resolvedInstances[$name]);
         }
 
         $instance = Engine::newInstance($name, $parameters);
+        $instance = $this->applyAwareInterface($instance);
         if (is_object($instance)) {
             $this->resolvedInstances[$name] = $instance;
         }
 
+        $this->_freshInstance = true;
         return $instance;
     }
 
@@ -66,7 +68,7 @@ class Factory implements Contract
         // Because the DI only resolve a dependency only when it is registered,
         // so we try to resolve it in simple way if it is not registered
         if (!$this->has($name)) {
-            return $this->simpleResolve($name, $parameters);
+            return $this->resolve($name, $parameters);
         }
 
         // Retrieve the appropriate service
@@ -84,6 +86,7 @@ class Factory implements Contract
         // if it was instantiated
         if ($service->isShared()) {
             if (isset($this->sharedInstances[$name]) && !is_null($this->sharedInstances[$name])) {
+                $this->_freshInstance = false;
                 return $this->sharedInstances[$name];
             }
         }
@@ -97,12 +100,7 @@ class Factory implements Contract
 
         // Try to resolve with dependency injection
         $instance = $service->resolve($parameters, $this);
-        if ($instance instanceof InjectionAwareInterface) {
-            $instance->setDI($this);
-        }
-        if ($instance instanceof EventsAwareInterface) {
-            $instance->setEventsManager($eventsManager);
-        }
+        $instance = $this->applyAwareInterface($instance);
 
         // Make it as sharable item if sharing is enabled
         if ($service->isShared()) {
@@ -121,6 +119,19 @@ class Factory implements Contract
                 'parameters' => $parameters,
                 'instance'   => $instance
             ]);
+        }
+
+        $this->_freshInstance = true;
+        return $instance;
+    }
+
+    protected function applyAwareInterface($instance)
+    {
+        if ($instance instanceof InjectionAwareInterface) {
+            $instance->setDI($this);
+        }
+        if ($instance instanceof EventsAwareInterface) {
+            $instance->setEventsManager($this->getEventsManager());
         }
 
         return $instance;
@@ -181,7 +192,7 @@ class Factory implements Contract
 
     public function wasFreshInstance()
     {
-        return true;
+        return $this->_freshInstance;
     }
 
     public function getServices()

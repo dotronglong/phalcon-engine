@@ -2,7 +2,6 @@
 
 use Engine\Tests\TestCase;
 use Engine\Application\Factory as Application;
-use Engine\DI\Factory as DI;
 use Phalcon\Events\Manager as EventsManager;
 use Engine\Routing\Router\Factory as Router;
 
@@ -30,11 +29,6 @@ class ApplicationTest extends TestCase
             $register->onBoot();
         }
 
-        $resolver = $di->get('resolver');
-        $resolver->set('dispatch:controller', function(Router $router) {
-            dd($router->getControllerName());
-        });
-
         return $app;
     }
 
@@ -42,9 +36,32 @@ class ApplicationTest extends TestCase
     public function testHandle()
     {
         $app = $this->setUp();
-        $uri = '/blog/add';
+        $resolver = di('resolver');
+        $resolver->set('dispatch:controller', function($router) {
+            return '\\Engine\\Tests\\Application\\Sample';
+        });
 
-        $response = $app->handle($uri);
-        dd($response);
+        $sources = [
+            '/blog/add'  => [
+                'action'    => 'add',
+                'response'  => 'test'
+            ],
+            '/blog/view' => [
+                'action'    => 'view',
+                'exception' => 'Phalcon\\Mvc\\Dispatcher\\Exception'
+            ]
+        ];
+        $router = di('router');
+        foreach ($sources as $uri => $source) {
+            $router->add($uri, "Blog::Index::{$source['action']}");
+            try {
+                $response = $app->handle($uri);
+                $this->assertEquals($source['response'], $response);
+            } catch (\Exception $e) {
+                if (isset($source['exception'])) {
+                    $this->assertInstanceOf($source['exception'], $e);
+                }
+            }
+        }
     }
 }

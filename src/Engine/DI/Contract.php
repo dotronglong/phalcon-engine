@@ -3,8 +3,9 @@
 use Engine\Exception\ClassNotFoundException;
 use Engine\Exception\InvalidInstanceException;
 use Phalcon\DiInterface;
+use Phalcon\Events\EventsAwareInterface;
 
-interface Contract extends DiInterface
+interface Contract extends DiInterface, EventsAwareInterface
 {
     /**
      * Add a register by name
