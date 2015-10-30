@@ -1,7 +1,7 @@
 <?php namespace Engine\Tests\DI;
 
-use Engine\DI\Contract as DiContract;
-use Engine\DI\Factory as DI;
+use Engine\Application\Container\Contract as ContainerContract;
+use Engine\Application\Container\Factory as Container;
 use Engine\Tests\TestCase;
 use Engine\DI\ServiceRegister;
 use Engine\Exception\ClassNotFoundException;
@@ -13,60 +13,60 @@ class ContainerTest extends TestCase
 
     public function testImplementContract()
     {
-        $di = new DI();
-        $this->assertInstanceOf(DiContract::class, $di);
-        return $di;
+        $container = new Container();
+        $this->assertInstanceOf(ContainerContract::class, $container);
+        return $container;
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testAddAndRemoveRegister($di)
+    public function testAddAndRemoveRegister($container)
     {
-        $di = clone($di);
-        $di->addRegister($this->testRegister);
-        $this->assertCount(1, $di->getRegisters());
-        $di->removeRegister($this->testRegister);
-        $this->assertCount(0, $di->getRegisters());
+        $container = clone($container);
+        $container->addRegister($this->testRegister);
+        $this->assertCount(1, $container->getRegisters());
+        $container->removeRegister($this->testRegister);
+        $this->assertCount(0, $container->getRegisters());
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testGetRegisters($di)
+    public function testGetRegisters($container)
     {
-        $di = clone($di);
-        $this->assertCount(0, $di->getRegisters());
-        $di->addRegister($this->testRegister);
-        $this->assertCount(1, $di->getRegisters());
+        $container = clone($container);
+        $this->assertCount(0, $container->getRegisters());
+        $container->addRegister($this->testRegister);
+        $this->assertCount(1, $container->getRegisters());
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testSetAndRemoveRegisters($di)
+    public function testSetAndRemoveRegisters($container)
     {
-        $di = clone($di);
-        $di->setRegisters([$this->testRegister]);
-        $this->assertCount(1, $di->getRegisters());
-        $di->removeRegisters();
-        $this->assertCount(0, $di->getRegisters());
+        $container = clone($container);
+        $container->setRegisters([$this->testRegister]);
+        $this->assertCount(1, $container->getRegisters());
+        $container->removeRegisters();
+        $this->assertCount(0, $container->getRegisters());
     }
 
     /**
      * @depends testImplementContract
      */
-    public function testMakeRegisters($di)
+    public function testMakeRegisters($container)
     {
-        $di = clone($di);
-        $di->setRegisters([$this->testRegister]);
-        $this->assertException(ClassNotFoundException::class, function() use ($di) {
-            $di->makeRegisters();
+        $container = clone($container);
+        $container->setRegisters([$this->testRegister]);
+        $this->assertException(ClassNotFoundException::class, function() use ($container) {
+            $container->makeRegisters();
         });
-        $di->removeRegisters();
+        $container->removeRegisters();
 
-        $di->addRegister($this->validRegister);
-        $registers = $di->makeRegisters()->getRegisters();
+        $container->addRegister($this->validRegister);
+        $registers = $container->makeRegisters()->getRegisters();
         $this->assertArrayInstanceOf(ServiceRegister::class, $registers);
     }
 }

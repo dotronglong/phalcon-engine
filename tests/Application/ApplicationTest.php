@@ -4,6 +4,7 @@ use Engine\Tests\TestCase;
 use Engine\Application\Factory as Application;
 use Phalcon\Events\Manager as EventsManager;
 use Engine\Routing\Router\Factory as Router;
+use Engine\Application\Container\Factory as Container;
 
 class ApplicationTest extends TestCase
 {
@@ -13,7 +14,9 @@ class ApplicationTest extends TestCase
         $di  = di();
         $app->setEventsManager($di->getEventsManager());
 
-        $di->setRegisters([
+        $container = new Container();
+        $container->setDI($di);
+        $container->setRegisters([
             \Engine\Session\ServiceRegister::class,
             \Engine\Debug\ServiceRegister::class,
             \Engine\Resolver\ServiceRegister::class,
@@ -25,7 +28,7 @@ class ApplicationTest extends TestCase
             \Engine\Url\ServiceRegister::class,
             \Engine\View\ServiceRegister::class,
         ])->makeRegisters();
-        foreach ($di->getRegisters() as $register) {
+        foreach ($container->getRegisters() as $register) {
             $register->onBoot();
         }
 
