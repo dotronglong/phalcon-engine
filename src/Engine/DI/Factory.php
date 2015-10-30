@@ -155,6 +155,7 @@ class Factory implements Contract
     public function getShared($name, $parameters = null)
     {
         if (isset($this->sharedInstances[$name])) {
+            $this->_freshInstance = false;
             return $this->sharedInstances[$name];
         } else {
             return $this->get($name, $parameters);
