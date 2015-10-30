@@ -4,6 +4,8 @@ use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Engine\Tests\TestCase;
 use Engine\Db\Model\Factory as Model;
 use Engine\Db\Model\Contract as ModelContract;
+use Engine\DI\Factory as DI;
+use Phalcon\Events\Manager as EventsManager;
 
 class ModelTest extends TestCase
 {

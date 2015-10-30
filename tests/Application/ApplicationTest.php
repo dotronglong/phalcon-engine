@@ -4,19 +4,15 @@ use Engine\Tests\TestCase;
 use Engine\Application\Factory as Application;
 use Engine\DI\Factory as DI;
 use Phalcon\Events\Manager as EventsManager;
-use Engine\Routing\Router;
+use Engine\Routing\Router\Factory as Router;
 
 class ApplicationTest extends TestCase
 {
     protected function setUp()
     {
         $app = new Application();
-        $di  = new DI();
-        $em  = new EventsManager();
-
-        $app->setEventsManager($em);
-        $di->setInternalEventsManager($em);
-        $di->setShared('eventsManager', $em);
+        $di  = di();
+        $app->setEventsManager($di->getEventsManager());
 
         $di->setRegisters([
             \Engine\Session\ServiceRegister::class,
@@ -36,7 +32,7 @@ class ApplicationTest extends TestCase
 
         $resolver = $di->get('resolver');
         $resolver->set('dispatch:controller', function(Router $router) {
-            dd($router);
+            dd($router->getControllerName());
         });
 
         return $app;
@@ -48,7 +44,7 @@ class ApplicationTest extends TestCase
         $app = $this->setUp();
         $uri = '/blog/add';
 
-//        $response = $app->handle($uri);
-//        dd($response);
+        $response = $app->handle($uri);
+        dd($response);
     }
 }
