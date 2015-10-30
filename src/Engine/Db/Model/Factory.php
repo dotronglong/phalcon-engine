@@ -4,7 +4,7 @@ use Phalcon\Mvc\Model;
 
 class Factory extends Model implements Contract
 {
-    use HasTimestamp, HasSoftDeletes;
+    use HasPresenter, HasTimestamp, HasSoftDeletes;
 
     /**
      * The attributes that should be hidden for arrays.

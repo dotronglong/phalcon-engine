@@ -1,6 +1,6 @@
 <?php
 
-use Engine\DI\Factory as DI;
+use Phalcon\Di as DI;
 use Engine\Debug\Dumper;
 use Engine\Helper\Str;
 

@@ -1,5 +1,6 @@
 <?php namespace Engine\DI;
 
+use Phalcon\Di;
 use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\Events\EventsAwareInterface;
 use Phalcon\DiInterface;
@@ -195,7 +196,7 @@ class Factory implements Contract
 
     public static function setDefault(DiInterface $di)
     {
-        Engine::getInstance()->di = $di;
+        Di::setDefault($di);
     }
 
     /**
@@ -203,7 +204,7 @@ class Factory implements Contract
      */
     public static function getDefault()
     {
-        return Engine::getInstance()->di;
+        return Di::getDefault();
     }
 
     public function setRaw($name, ServiceInterface $definition)
@@ -223,7 +224,7 @@ class Factory implements Contract
 
     public static function reset()
     {
-        Engine::getInstance()->di = null;
+        Di::reset();
     }
 
     /**
