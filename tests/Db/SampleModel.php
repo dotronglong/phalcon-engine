@@ -1,6 +1,7 @@
 <?php namespace Engine\Tests\Db;
 
 use Engine\Db\Model\Factory as Model;
+use Engine\Db\Model\HasPresenter;
 
 class SamplePresenter
 {
@@ -12,5 +13,9 @@ class SamplePresenter
 
 class SampleModel extends Model
 {
+    use HasPresenter;
+
+    protected $usePresenter = true;
+
     protected $usePresenterClass = SamplePresenter::class;
 }

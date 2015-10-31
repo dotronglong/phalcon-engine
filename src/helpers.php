@@ -99,7 +99,7 @@ if (! function_exists('di')) {
      *
      * @param  string  $make
      * @param  array   $parameters
-     * @return mixed|\Engine\DI\Container
+     * @return mixed|\Engine\DI\Factory
      */
     function di($make = null, $parameters = [])
     {

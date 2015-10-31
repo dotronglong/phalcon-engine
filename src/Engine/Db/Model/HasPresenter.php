@@ -5,27 +5,15 @@ use Engine\Db\Model\Presenter\Contract as Presenter;
 trait HasPresenter
 {
     /**
-     * Use Presenter or not
-     *
-     * @var bool
-     */
-    protected $usePresenter = true;
-
-    /**
-     * @var string
-     */
-    protected $usePresenterClass;
-
-    /**
      * @var Presenter
      */
     protected $presenter;
 
     public function __call($name, $arguments)
     {
-        if ($this->usePresenter) {
+        if (property_exists($this, 'usePresenter') && $this->usePresenter) {
             if (is_null($this->presenter)) {
-                if (is_null($this->usePresenterClass)) {
+                if (property_exists($this, 'usePresenterClass') && is_null($this->usePresenterClass)) {
                     $args  = explode('\\', get_called_class());
                     array_pop($args);
                     $usePresenterClass = join('\\', $args) . '\\Presenter';

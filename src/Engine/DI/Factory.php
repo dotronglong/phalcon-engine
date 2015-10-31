@@ -120,13 +120,14 @@ class Factory implements Contract
         return $instance;
     }
 
-    protected function applyAwareInterface($instance)
+    public static function applyAwareInterface($instance)
     {
+        $di = di();
         if ($instance instanceof InjectionAwareInterface) {
-            $instance->setDI($this);
+            $instance->setDI($di);
         }
         if ($instance instanceof EventsAwareInterface) {
-            $instance->setEventsManager($this->getEventsManager());
+            $instance->setEventsManager($di->getEventsManager());
         }
 
         return $instance;

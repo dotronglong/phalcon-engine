@@ -2,9 +2,9 @@
 
 use Phalcon\Mvc\Model;
 
-class Factory extends Model implements Contract
+abstract class Factory extends Model implements Contract
 {
-    use HasPresenter, HasTimestamp, HasSoftDeletes;
+    use HasTimestamp;
 
     /**
      * The attributes that should be hidden for arrays.

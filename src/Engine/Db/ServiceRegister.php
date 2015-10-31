@@ -1,16 +1,11 @@
 <?php namespace Engine\Db;
 
-use Engine\DI\Contract as DI;
 use Engine\DI\ServiceRegister as ServiceRegisterContract;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\Adapter\Pdo\Oracle;
 use Phalcon\Db\Adapter\Pdo\Postgresql;
 use Phalcon\Db\Adapter\Pdo\Sqlite;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
-use Engine\Db\Query\Contract as QueryContract;
-use Engine\Db\Query\Factory as Query;
-use Engine\Db\Query\Builder\Contract as QueryBuilderContract;
-use Engine\Db\Query\Builder\Factory as QueryBuilder;
 use Engine\DI\HasInjection;
 
 class ServiceRegister implements ServiceRegisterContract
@@ -21,9 +16,7 @@ class ServiceRegister implements ServiceRegisterContract
     {
         // TODO: Implement onBoot() method.
         $this->registerDb();
-        $this->registerModel();
-        $this->registerQuery();
-        $this->registerQueryBuilder();
+        $this->registerModelsManager();
     }
 
     public function onReady()
@@ -64,20 +57,10 @@ class ServiceRegister implements ServiceRegisterContract
         });
     }
 
-    protected function registerModel()
+    protected function registerModelsManager()
     {
         $this->getDI()->setShared('modelsManager', function() {
             return new ModelsManager();
         });
-    }
-
-    protected function registerQuery()
-    {
-        $this->getDI()->set(QueryContract::class, Query::class);
-    }
-
-    protected function registerQueryBuilder()
-    {
-        $this->getDI()->set(QueryBuilderContract::class, QueryBuilder::class);
     }
 }
