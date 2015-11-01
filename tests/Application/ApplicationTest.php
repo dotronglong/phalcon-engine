@@ -35,12 +35,24 @@ class ApplicationTest extends TestCase
         return $app;
     }
 
+    protected function getDispatcherListener()
+    {
+        $dispatcherListener = $this->getMockBuilder('DispatcherListener')
+                                   ->setMethods(['beforeDispatch'])
+                                   ->getMock();
+
+        $dispatcherListener->expects($this->once())
+                           ->method('beforeDispatch')
+                           ->will($this->returnValue('\\Engine\\Tests\\Application\\'));
+
+        return $dispatcherListener;
+    }
 
     public function testHandle()
     {
         $app = $this->setUp();
         $resolver = di('resolver');
-        $resolver->set('dispatch:controller', function($router) {
+        $resolver->set('dispatch:controller', function() {
             return '\\Engine\\Tests\\Application\\Sample';
         });
 
@@ -58,7 +70,8 @@ class ApplicationTest extends TestCase
         foreach ($sources as $uri => $source) {
             $router->add($uri, "Blog::Index::{$source['action']}");
             try {
-                $response = $app->handle($uri);
+                $app->handle($uri);
+                $response = di('dispatcher')->getReturnedValue();
                 $this->assertEquals($source['response'], $response);
             } catch (\Exception $e) {
                 if (isset($source['exception'])) {

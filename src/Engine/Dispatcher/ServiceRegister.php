@@ -1,8 +1,8 @@
 <?php namespace Engine\Dispatcher;
 
 use Engine\DI\ServiceRegister as ServiceRegisterContract;
-use Engine\Dispatcher\Factory as Dispatcher;
 use Engine\DI\HasInjection;
+use Phalcon\Mvc\Dispatcher;
 
 class ServiceRegister implements ServiceRegisterContract
 {
@@ -14,6 +14,7 @@ class ServiceRegister implements ServiceRegisterContract
         $this->getDI()->setShared('dispatcher', function() {
             $di = $this->getDI();
             $em = $di->getEventsManager();
+            $em->attach('dispatch', new DispatchListener());
 
             $dispatcher = new Dispatcher();
             $dispatcher->setDI($di);

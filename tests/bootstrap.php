@@ -1,7 +1,6 @@
 <?php
 use Engine\DI\Factory as DI;
 use Phalcon\Events\Manager as EventsManager;
-use Engine\Config\Factory as Config;
 
 session_start();
 

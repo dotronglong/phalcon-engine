@@ -2,8 +2,9 @@
 
 use Engine\DI\ServiceRegister as ServiceRegisterContract;
 use Engine\Http\Request\Factory as Request;
-use Engine\Http\Response\Factory as Response;
 use Engine\DI\HasInjection;
+use Phalcon\Http\ResponseInterface;
+use Phalcon\Http\Response;
 
 class ServiceRegister implements ServiceRegisterContract
 {
@@ -15,9 +16,10 @@ class ServiceRegister implements ServiceRegisterContract
         $this->getDI()->setShared('request', function () {
             return new Request();
         });
-        $this->getDI()->setShared('response', function() {
+        $this->getDI()->setShared('response', function () {
             return new Response();
         });
+        $this->getDI()->set(ResponseInterface::class, Response::class);
     }
 
     public function onReady()

@@ -4,6 +4,7 @@ use Phalcon\Mvc\Router;
 
 class Factory extends Router implements Contract
 {
+
     public function setControllerName($ctlName)
     {
         // TODO: Implement setControllerName() method.
@@ -29,6 +30,13 @@ class Factory extends Router implements Contract
     {
         // TODO: Implement setParams() method.
         $this->_params = $params;
+        return $this;
+    }
+
+    public function setNamespaceName($namespaceName)
+    {
+        // TODO: Implement setNamespaceName() method.
+        $this->namespace = $namespaceName;
         return $this;
     }
 

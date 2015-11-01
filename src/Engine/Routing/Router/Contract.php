@@ -35,4 +35,12 @@ interface Contract extends RouterInterface
      * @return static
      */
     public function setParams(array $params = []);
+
+    /**
+     * Set Namespace's name
+     *
+     * @param $namespaceName
+     * @return static
+     */
+    public function setNamespaceName($namespaceName);
 }
