@@ -43,17 +43,17 @@ class Factory implements Contract
      */
     protected function resolve($name, $parameters = null)
     {
+        $this->_freshInstance = true;
         if (isset($this->resolvedInstances[$name]) && is_null($parameters)) {
             return clone($this->resolvedInstances[$name]);
         }
 
         $instance = Service::resolveInstance($name, $parameters);
-        $instance = $this->applyAwareInterface($instance);
         if (is_object($instance)) {
+            $instance                       = $this->applyAwareInterface($instance);
             $this->resolvedInstances[$name] = $instance;
         }
 
-        $this->_freshInstance = true;
         return $instance;
     }
 
@@ -69,12 +69,10 @@ class Factory implements Contract
         $service  = $this->getService($name);
 
         // Get EventsManager
-        $eventsManager = $this->getEventsManager();
+        $em = $this->getEventsManager();
 
         // Call event beforeServiceResolve
-        if (is_object($eventsManager)) {
-            $eventsManager->fire('di:beforeServiceResolve', $this, ['name' => $name, 'parameters' => $parameters]);
-        }
+        $em->fire('di:beforeServiceResolve', $this, ['name' => $name, 'parameters' => $parameters]);
 
         // Once this is a shared service, container will return the shared instance
         // if it was instantiated
@@ -108,13 +106,11 @@ class Factory implements Contract
         }
 
         // Call event afterServiceResolve
-        if (is_object($eventsManager)) {
-            $eventsManager->fire('di:afterServiceResolve', $this, [
-                'name'       => $name,
-                'parameters' => $parameters,
-                'instance'   => $instance
-            ]);
-        }
+        $em->fire('di:afterServiceResolve', $this, [
+            'name'       => $name,
+            'parameters' => $parameters,
+            'instance'   => $instance
+        ]);
 
         $this->_freshInstance = true;
         return $instance;

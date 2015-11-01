@@ -13,10 +13,6 @@ class Factory extends Service implements Contract
 {
     public function resolve($parameters = [], DI $di = null)
     {
-        if (is_null($di)) {
-            $di = di();
-        }
-
         $instance   = null;
         $definition = $this->getDefinition();
         if ($definition instanceof Closure) {
