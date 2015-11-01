@@ -1,11 +1,13 @@
 <?php namespace Engine\DI\Service;
 
 use Engine\Exception\BindingResolutionException;
+use Engine\Exception\ClassNotFoundException;
 use Engine\Exception\MethodNotFoundException;
 use Phalcon\Di\Service;
 use Phalcon\DiInterface as DI;
 use ReflectionClass;
 use Closure;
+use Exception;
 
 class Factory extends Service implements Contract
 {
@@ -21,15 +23,8 @@ class Factory extends Service implements Contract
             $instance = $this->resolveClosure($parameters);
         } elseif (is_object($definition)) {
             $instance = $definition;
-        } else {
-            $reflector  = $this->getReflector();
-            $parameters = $this->buildDependencies($di, $reflector, $parameters);
-
-            if (count($parameters)) {
-                $instance = $reflector->newInstanceArgs(array_values($parameters));
-            } else {
-                $instance = $reflector->newInstance();
-            }
+        } elseif (is_string($definition)) {
+            $instance = $this->resolveInstance($definition, $parameters);
         }
         
         if ($instance) {
@@ -54,16 +49,20 @@ class Factory extends Service implements Contract
      * @return ReflectionClass
      * @throw \Engine\Exception\ClassNotFoundException
      */
-    protected function getReflector()
+    protected static function getReflector($name)
     {
-        $reflector = new ReflectionClass($this->getDefinition());
+        try {
+            $reflector = new ReflectionClass($name);
+        } catch (Exception $e) {
+            throw new ClassNotFoundException("Class $name could not be found");
+        }
 
         // If the type is not instantiable, the developer is attempting to resolve
         // an abstract type such as an Interface of Abstract Class and there is
         // no binding registered for the abstractions so we need to bail out.
         if (!$reflector->isInstantiable())
         {
-            $message = "Target [{$this->getName()}] is not instantiable.";
+            $message = "Target [$name] is not instantiable.";
 
             throw new BindingResolutionException($message);
         }
@@ -133,5 +132,20 @@ class Factory extends Service implements Contract
         $parameters  = self::buildDependencies($di, $reflector, $parameters, $method);
 
         return call_user_func_array([$object, $method], $parameters);
+    }
+
+    public static function resolveInstance($name, $parameters = null)
+    {
+        // TODO: Implement resolveInstance() method.
+        $reflector  = self::getReflector($name);
+        $parameters = self::buildDependencies(di(), $reflector, $parameters);
+
+        if (count($parameters)) {
+            $instance = $reflector->newInstanceArgs(array_values($parameters));
+        } else {
+            $instance = $reflector->newInstance();
+        }
+
+        return $instance;
     }
 }

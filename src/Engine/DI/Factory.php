@@ -47,7 +47,7 @@ class Factory implements Contract
             return clone($this->resolvedInstances[$name]);
         }
 
-        $instance = Engine::newInstance($name, $parameters);
+        $instance = Service::resolveInstance($name, $parameters);
         $instance = $this->applyAwareInterface($instance);
         if (is_object($instance)) {
             $this->resolvedInstances[$name] = $instance;
