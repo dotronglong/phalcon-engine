@@ -221,6 +221,10 @@ if ( ! function_exists('forward'))
         $resolver   = di('resolver');
 
         $forward    = ['action' => $action];
+        if (is_null($module)) {
+            $router = di('router');
+            $module = $router->getModuleName();
+        }
         if (!empty($controller)) {
             $forward['controller'] = $resolver->run('dispatch:forward', function() use ($controller, $module) {
                 return "\\App\\Modules\\$module\\Controllers\\$controller";
