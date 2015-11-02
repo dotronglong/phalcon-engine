@@ -109,4 +109,18 @@ class GeneralTest extends TestCase
     {
         $this->assertNull(session('var_name'));
     }
+
+    public function testGetBasePath()
+    {
+        $this->assertEquals('my_path', base_path('my_path'));
+        define('PATH_ROOT', 'root');
+        $this->assertEquals('root/my_path', base_path('/my_path'));
+    }
+
+    public function testGetAppPath()
+    {
+        $this->assertEquals('my_path', app_path('my_path'));
+        define('PATH_APP', 'root/app');
+        $this->assertEquals('root/app/my_path', app_path('/my_path'));
+    }
 }

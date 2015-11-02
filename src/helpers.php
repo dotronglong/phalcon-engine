@@ -38,6 +38,33 @@ if (! function_exists('dd')) {
         die(1);
     }
 }
+
+if (! function_exists('base_path')) {
+    /**
+     * Return the appropriate base path
+     *
+     * @param string $path
+     * @return string
+     */
+    function base_path($path = null)
+    {
+        return (defined('PATH_ROOT') ? PATH_ROOT : '') . $path;
+    }
+}
+
+if (! function_exists('app_path')) {
+    /**
+     * Return the appropriate app path
+     *
+     * @param string $path
+     * @return string
+     */
+    function app_path($path = null)
+    {
+        return (defined('PATH_APP') ? PATH_APP : '') . $path;
+    }
+}
+
 if ( ! function_exists('value'))
 {
     /**
@@ -215,6 +242,15 @@ if ( ! function_exists('server'))
 
 if ( ! function_exists('forward'))
 {
+    /**
+     * Forward to another module-controller-action
+     *
+     * @param string $action
+     * @param string $controller
+     * @param string $module
+     * @param string $params
+     * @return mixed
+     */
     function forward($action, $controller = null, $module = null, $params = null)
     {
         $dispatcher = di('dispatcher');
