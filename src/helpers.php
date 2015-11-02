@@ -212,3 +212,24 @@ if ( ! function_exists('server'))
         return isset($_SERVER[$name]) ? $_SERVER[$name] : $default;
     }
 }
+
+if ( ! function_exists('forward'))
+{
+    function forward($action, $controller = null, $module = null, $params = null)
+    {
+        $dispatcher = di('dispatcher');
+        $resolver   = di('resolver');
+
+        $forward    = ['action' => $action];
+        if (!empty($controller)) {
+            $forward['controller'] = $resolver->run('dispatch:forward', function() use ($controller, $module) {
+                return "\\App\\Modules\\$module\\Controllers\\$controller";
+            }, [$controller, $module]);
+        }
+        if (is_array($params)) {
+            $forward['params'] = $params;
+        }
+
+        return $dispatcher->forward($forward);
+    }
+}

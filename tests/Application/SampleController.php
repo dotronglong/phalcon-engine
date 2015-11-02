@@ -8,4 +8,9 @@ class SampleController extends Controller
     {
         return 'test';
     }
+
+    public function forwardAction()
+    {
+        return forward('my', 'test');
+    }
 }

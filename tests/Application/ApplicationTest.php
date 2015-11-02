@@ -55,6 +55,9 @@ class ApplicationTest extends TestCase
         $resolver->set('dispatch:controller', function() {
             return '\\Engine\\Tests\\Application\\Sample';
         });
+        $resolver->set('dispatch:forward', function($controller, $module) {
+            return '\\Engine\\Tests\\Application\\Another';
+        });
 
         $sources = [
             '/blog/add'  => [
@@ -64,6 +67,10 @@ class ApplicationTest extends TestCase
             '/blog/view' => [
                 'action'    => 'view',
                 'exception' => 'Phalcon\\Mvc\\Dispatcher\\Exception'
+            ],
+            '/blog/forward' => [
+                'action'    => 'forward',
+                'response'  => 'my_action'
             ]
         ];
         $router = di('router');
@@ -76,6 +83,9 @@ class ApplicationTest extends TestCase
             } catch (\Exception $e) {
                 if (isset($source['exception'])) {
                     $this->assertInstanceOf($source['exception'], $e);
+                } else {
+                    echo $e->getMessage();
+                    dd($e->getTraceAsString());
                 }
             }
         }
