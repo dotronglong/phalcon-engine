@@ -3,7 +3,6 @@
 use Phalcon\DiInterface;
 use Phalcon\Di\ServiceInterface;
 use Engine\Tests\TestCase;
-use Engine\DI\Factory as DI;
 
 require 'SampleObject.php';
 

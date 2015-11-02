@@ -36,7 +36,7 @@ class Factory extends Router implements Contract
     public function setNamespaceName($namespaceName)
     {
         // TODO: Implement setNamespaceName() method.
-        $this->namespace = $namespaceName;
+        $this->_namespace = $namespaceName;
         return $this;
     }
 
