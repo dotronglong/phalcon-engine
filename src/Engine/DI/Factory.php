@@ -1,5 +1,6 @@
 <?php namespace Engine\DI;
 
+use Engine\Exception\NullPointerException;
 use Phalcon\Di;
 use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\Events\EventsAwareInterface;
@@ -70,6 +71,9 @@ class Factory implements Contract
 
         // Get EventsManager
         $em = $this->getEventsManager();
+        if (is_null($em)) {
+            throw new NullPointerException('EventsManager must be defined');
+        }
 
         // Call event beforeServiceResolve
         $em->fire('di:beforeServiceResolve', $this, ['name' => $name, 'parameters' => $parameters]);

@@ -5,6 +5,8 @@ use Phalcon\Di\ServiceInterface;
 use Engine\Tests\TestCase;
 use Engine\DI\Factory as DI;
 
+require 'SampleObject.php';
+
 class InjectionTest extends TestCase
 {
     protected $abstractClass = 'abstract_class';
@@ -14,7 +16,7 @@ class InjectionTest extends TestCase
     
     public function testImplementContract()
     {
-        $di = new DI();
+        $di = di();
         $this->assertInstanceOf(DiInterface::class, $di);
         return $di;
     }
