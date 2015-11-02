@@ -3,7 +3,7 @@
 use Engine\Exception\NullPointerException;
 use Phalcon\Mvc\Application;
 use Phalcon\Http\ResponseInterface;
-use Phalcon\Mvc\View as PhalconView;
+use Phalcon\Mvc\ViewBaseInterface as View;
 
 class Factory extends Application
 {
@@ -57,7 +57,7 @@ class Factory extends Application
             // There should be a response
             $response = null;
             $returnedValue = $dispatcher->getReturnedValue();
-            if ($returnedValue instanceof PhalconView) {
+            if ($returnedValue instanceof View) {
                 $response = $di->get(ResponseInterface::class);
                 $response->setContent($returnedValue->getContent());
             } elseif ($returnedValue instanceof ResponseInterface) {

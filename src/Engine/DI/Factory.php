@@ -6,9 +6,7 @@ use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\Events\EventsAwareInterface;
 use Phalcon\DiInterface;
 use Phalcon\Di\ServiceInterface;
-use Engine\Exception\InvalidInstanceException;
 use Engine\DI\Service\Factory as Service;
-use Engine\Engine;
 use Engine\Event\HasEventsManager;
 use Exception;
 

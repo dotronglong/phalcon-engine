@@ -6,6 +6,8 @@ use Engine\Helper\Str;
 use Engine\Exception\ClassNotFoundException;
 use Engine\Config\Factory as Config;
 use Engine\Config\Contract as ConfigContract;
+use Engine\View\Contract as ViewContract;
+use Engine\Resolver\Contract as Resolver;
 
 if (! function_exists('d')) {
     /**
@@ -271,5 +273,82 @@ if ( ! function_exists('forward'))
         }
 
         return $dispatcher->forward($forward);
+    }
+}
+
+if ( ! function_exists('resolver'))
+{
+    /**
+     * Get Resolver
+     *
+     * @return Resolver
+     */
+    function resolver()
+    {
+        return di('resolver');
+    }
+}
+
+if ( ! function_exists('view'))
+{
+    /**
+     * Get view
+     *
+     * @param string     $path
+     * @param array      $data
+     * @param bool|false $render
+     * @return \Engine\View\Factory|string
+     */
+    function view($path = null, $data = [], $render = false)
+    {
+        if (is_null($path)) {
+            return di('view');
+        }
+
+        $view = di(ViewContract::class);
+        $view = resolver()->run('view:render', function($view, $path) {
+            return $view->setPath($path);
+        }, [$view, $path]);
+
+        if (is_array($data) && count($data)) {
+            foreach ($data as $key => $value) {
+                $view->setVar($key, $value);
+            }
+        }
+
+        if ($render) {
+            return $view->render($view->getPath(), $data);
+        }
+
+        return $view;
+    }
+}
+
+if ( ! function_exists('partial'))
+{
+    /**
+     * Partial View
+     *
+     * @param string $path
+     * @param array  $data
+     * @param bool   $render
+     * @return string
+     */
+    function partial($path, $data = [], $render = true)
+    {
+        $view = di('view');
+        $path = resolver()->run('view:partial', function($path) {
+            return $path;
+        }, [$path]);
+
+        ob_start();
+        $view->partial($path, $data);
+        $content = ob_get_clean();
+
+        if ($render === false) {
+            return $content;
+        }
+
+        echo $content;
     }
 }
