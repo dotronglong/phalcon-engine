@@ -31,6 +31,11 @@ class Factory extends Application
             return false;
         }
 
+        // Fire application:ready event
+        if ($em->fire('application:ready', $this) === false) {
+            return false;
+        }
+
         // Handle Router
         $router = $di->getShared('router');
         $router->handle($uri);

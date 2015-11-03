@@ -352,3 +352,17 @@ if ( ! function_exists('partial'))
         }
     }
 }
+
+if ( ! function_exists('with'))
+{
+    /**
+     * Return input object
+     *
+     * @param mixed $object
+     * @return mixed
+     */
+    function with($object)
+    {
+        return $object;
+    }
+}
