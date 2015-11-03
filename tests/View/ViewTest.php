@@ -50,7 +50,7 @@ class ViewTest extends TestCase
             return __DIR__ . "/views/$path.phtml";
         });
 
-        $content = partial('view_params', ['name' => 'John Doe'], false);
+        $content = partial('view_params', ['name' => 'John Doe'], true);
         $this->assertEquals('Hello John Doe', $content);
     }
 }

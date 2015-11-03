@@ -331,24 +331,24 @@ if ( ! function_exists('partial'))
      *
      * @param string $path
      * @param array  $data
-     * @param bool   $render
+     * @param bool   $buffer
      * @return string
      */
-    function partial($path, $data = [], $render = true)
+    function partial($path, $data = [], $buffer = false)
     {
         $view = di('view');
         $path = resolver()->run('view:partial', function($path) {
             return $path;
         }, [$path]);
 
-        ob_start();
-        $view->partial($path, $data);
-        $content = ob_get_clean();
-
-        if ($render === false) {
-            return $content;
+        if ($buffer) {
+            ob_start();
         }
 
-        echo $content;
+        $view->partial($path, $data);
+
+        if ($buffer) {
+            return ob_get_clean();
+        }
     }
 }
