@@ -164,7 +164,7 @@ if ( ! function_exists('config'))
                 if (!$config->has($scope)) {
                     $data = di('resolver')->run('config:load', function($scope) {
                         if (defined('PATH_APP_CONFIG')) {
-                            return PATH_APP_CONFIG . "/$scope.php";
+                            return require PATH_APP_CONFIG . "/$scope.php";
                         }
                     }, [$scope]);
                     $config->sets($data);
