@@ -32,6 +32,9 @@ class ApplicationTest extends TestCase
             $register->onBoot();
         }
 
+        // Make sure default .env loaded
+        $this->assertEquals('localhost', env('DB_HOST'));
+
         return $app;
     }
 

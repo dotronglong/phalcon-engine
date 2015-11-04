@@ -10,10 +10,6 @@ class ServiceRegister implements ServiceRegisterContract
     public function onBoot()
     {
         // TODO: Implement onBoot() method.
-        $allowDebug = env('APP_DEBUG', false);
-        if ($allowDebug) {
-            new \Whoops\Provider\Phalcon\WhoopsServiceProvider($this->getDI());
-        }
     }
 
     public function onReady()
