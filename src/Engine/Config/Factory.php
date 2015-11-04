@@ -32,11 +32,23 @@ class Factory implements Contract
         if (!$this->scopeExists($scope)) {
             $this->loadScope($scope);
         }
-
         unset($args[0]);
-        $name = join('.', $args);
 
-        return isset($this->data[$scope][$name]) ? $this->data[$scope][$name] : $default;
+        try {
+            $value = $this->data[$scope];
+            foreach ($args as $key) {
+                if (isset($value[$key]) && is_array($value[$key])) {
+                    $value = $value[$key];
+                } else {
+                    $value = null;
+                    break;
+                }
+            }
+
+            return $value;
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 
     public function set($name, $value = null)

@@ -23,4 +23,13 @@ interface Contract
      * @return static
      */
     public function set($name, $value = null);
+
+    /**
+     * Set array config
+     *
+     * @param array      $config
+     * @param bool|false $merge
+     * @return mixed
+     */
+    public function sets(array $config, $merge = false);
 }

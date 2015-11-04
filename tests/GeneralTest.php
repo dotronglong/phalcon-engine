@@ -56,7 +56,7 @@ class GeneralTest extends TestCase
     public function testSetConfig()
     {
         $config = new Config();
-        $this->assertInstanceOf(Config::class, $config->set('section.var', 'value'));
+        $this->assertInstanceOf(Config::class, $config->set('section.var', ['key' => 'value']));
         return $config;
     }
     
@@ -65,7 +65,7 @@ class GeneralTest extends TestCase
      */
     public function testGetConfig(Config $config)
     {
-        $this->assertEquals($config->get('section.var'), 'value');
+        $this->assertEquals('value', $config->get('section.var.key'));
     }
     
     /**
