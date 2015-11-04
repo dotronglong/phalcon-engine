@@ -20,6 +20,8 @@ class ConfigTest extends TestCase
     {
         $config = clone $config;
 
+        $this->assertNull($config->sets(['a' => 'b'], true));
+
         $array  = ['a' => 'b', 'c' => ['d' => 'e']];
         $config->sets($array);
         $this->assertEquals($array, $config->gets());

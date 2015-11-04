@@ -12,7 +12,7 @@ class Factory implements Contract
     /**
      * @var array
      */
-    protected $data;
+    protected $data = [];
 
     public function has($name)
     {
