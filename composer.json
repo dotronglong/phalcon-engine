@@ -9,8 +9,7 @@
         {
             "name": "Do Trong Long",
             "email": "me@dotronglong.com",
-            "homepage": "http://dotronglong.com",
-            "role": "Developer"
+            "homepage": "http://dotronglong.com"
         }
     ],
     "require": {
@@ -28,5 +27,10 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     }
 }
