@@ -23,7 +23,7 @@
             "Engine\\Tests\\": "tests"
         },
         "files": [
-            "src/Engine/helpers.php"
+            "src/helpers.php"
         ]
     },
     "require-dev": {
