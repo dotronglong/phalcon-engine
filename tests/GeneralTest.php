@@ -50,32 +50,6 @@ class GeneralTest extends TestCase
         $this->assertTrue(function_exists('config'));
     }
     
-    /**
-     * @depends testFunctionConfigExists
-     */
-    public function testSetConfig()
-    {
-        $config = new Config();
-        $this->assertInstanceOf(Config::class, $config->set('section.var', ['key' => 'value']));
-        return $config;
-    }
-    
-    /**
-     * @depends testSetConfig
-     */
-    public function testGetConfig(Config $config)
-    {
-        $this->assertEquals('value', $config->get('section.var.key'));
-    }
-    
-    /**
-     * @depends testSetConfig
-     */
-    public function testGetConfigWithDefaultValue(Config $config)
-    {
-        $this->assertEquals($config->get('section.var2', 'default'), 'default');
-    }
-    
     public function testFunctionSessionExists()
     {
         $this->assertTrue(function_exists('session'));

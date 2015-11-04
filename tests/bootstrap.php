@@ -1,6 +1,7 @@
 <?php
 use Engine\DI\Factory as DI;
 use Phalcon\Events\Manager as EventsManager;
+use Engine\Config\Factory as Config;
 
 session_start();
 
@@ -14,3 +15,6 @@ $di = new DI();
 $di->setEventsManager($em);
 $di->setShared('eventsManager', $em);
 DI::setDefault($di);
+
+$config = new Config();
+$di->setShared('config', $config);

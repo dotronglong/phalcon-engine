@@ -3,9 +3,7 @@
 use Phalcon\Di as DI;
 use Engine\Debug\Dumper;
 use Engine\Helper\Str;
-use Engine\Exception\ClassNotFoundException;
-use Engine\Config\Factory as Config;
-use Engine\Config\Contract as ConfigContract;
+use Engine\Config\Contract as Config;
 use Engine\View\Contract as ViewContract;
 use Engine\Resolver\Contract as Resolver;
 
@@ -155,24 +153,27 @@ if ( ! function_exists('config'))
      */
     function config($key = null, $default = null)
     {
-        try {
-            $config = di('config');
-        } catch (ClassNotFoundException $e) {
-            $config = new Config(defined('PATH_APP_CONFIG') ? PATH_APP_CONFIG : null);
-            di()->setShared('config', $config);
-        }
-
+        $config = di('config');
         if (is_null($key)) {
             return $config;
         }
 
-        if ($config instanceof ConfigContract) {
-            if (is_array($key)) {
-                return $config->set($key);
+        if ($config instanceof Config) {
+            if (preg_match('/(\w+)\./i', $key, $matches)) {
+                $scope = $matches[1];
+                if (!$config->has($scope)) {
+                    $data = di('resolver')->run('config:load', function($scope) {
+                        if (defined('PATH_APP_CONFIG')) {
+                            return PATH_APP_CONFIG . "/$scope.php";
+                        }
+                    }, [$scope]);
+                    $config->sets($data);
+                }
+                return $config->get($key, $default);
             }
-
-            return $config->get($key, $default);
         }
+
+        return $default;
     }
 }
 

@@ -5,102 +5,58 @@ use Engine\Exception\InvalidParameterException;
 class Factory implements Contract
 {
     /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * Path to folder which stores config
-     *
      * @var string
      */
-    protected $path;
+    protected $delimiter = '.';
 
-    public function __construct($path = null)
+    /**
+     * @var array
+     */
+    protected $data;
+
+    public function has($name)
     {
-        $this->path = $path;
+        // TODO: Implement has() method.
+        return isset($this->data[$name]);
     }
 
     public function get($name, $default = null)
     {
-        $args = explode('.', $name);
-        if (count($args) < 2) {
-            throw new InvalidParameterException("Invalid configuration name: $name");
-        }
-
-        $scope = $args[0];
-        if (!$this->scopeExists($scope)) {
-            $this->loadScope($scope);
-        }
-        unset($args[0]);
-
-        try {
-            $value = $this->data[$scope];
-            foreach ($args as $key) {
-                if (isset($value[$key]) && is_array($value[$key])) {
-                    $value = $value[$key];
-                } else {
-                    $value = null;
-                    break;
-                }
+        // TODO: Implement get() method.
+        $value = $this->data;
+        $args  = explode($this->delimiter, $name);
+        foreach ($args as $key) {
+            if (isset($value[$key])) {
+                $value = $value[$key];
+            } else {
+                $value = $default;
+                break;
             }
-
-            return $value;
-        } catch (\Exception $e) {
-            return $default;
         }
+
+        return $value;
     }
 
     public function set($name, $value = null)
     {
-        if (is_array($name)) {
-            return $this->sets($name, $value);
-        }
-
-        $args = explode('.', $name);
-        if (count($args) < 2) {
-            throw new InvalidParameterException("Invalid configuration name: $name");
-        }
-
-        $scope = $args[0];
-        if (!isset($this->data[$scope])) {
-            $this->data[$scope] = [];
-        }
-
-        unset($args[0]);
-        $this->data[$scope][join('.', $args)] = $value;
-
-        return $this;
+        // TODO: Implement set() method.
+        $this->data[$name] = $value;
     }
 
-    /**
-     * Set multiple configurations
-     *
-     * @param array  $keys
-     * @param string $scope
-     * @throws InvalidParameterException
-     */
-    protected function sets(array $keys, $scope = null)
+    public function sets(array $data, $merge = false)
     {
-        foreach ($keys as $name => $value)
-        {
-            if (is_null($scope)) {
-                $this->set($name, $value);
-            } else {
-                $this->set("$scope.$name", $value);
-            }
-
+        // TODO: Implement sets() method.
+        if ($merge) {
+            $this->data = array_merge($this->data, $data);
+        } else {
+            $this->data = $data;
         }
     }
 
-    protected function scopeExists($scope)
+    public function gets()
     {
-        return isset($this->data[$scope]);
+        // TODO: Implement gets() method.
+        return $this->data;
     }
 
-    protected function loadScope($scope)
-    {
-        $config = require "{$this->path}/$scope.php";
-        $this->data[$scope] = $config;
-    }
 }

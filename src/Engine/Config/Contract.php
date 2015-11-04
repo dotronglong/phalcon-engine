@@ -1,17 +1,20 @@
 <?php namespace Engine\Config;
 
-use Engine\Exception\InvalidParameterException;
-
 interface Contract
 {
+    /**
+     * Has config with name
+     * @param string $name
+     * @return boolean
+     */
+    public function has($name);
+
     /**
      * Get configuration
      *
      * @param string $name
      * @param null   $default
      * @return mixed
-     *
-     * @throws InvalidParameterException
      */
     public function get($name, $default = null);
 
@@ -20,16 +23,21 @@ interface Contract
      *
      * @param string $name
      * @param mixed  $value
-     * @return static
+     * @return void
      */
     public function set($name, $value = null);
 
     /**
      * Set array config
      *
-     * @param array      $config
+     * @param array      $data
      * @param bool|false $merge
      * @return mixed
      */
-    public function sets(array $config, $merge = false);
+    public function sets(array $data, $merge = false);
+
+    /**
+     * @return array
+     */
+    public function gets();
 }
