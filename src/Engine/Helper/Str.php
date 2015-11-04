@@ -1,6 +1,7 @@
 <?php namespace Engine\Helper;
 
 use RuntimeException;
+use Stringy\StaticStringy;
 
 class Str
 {
@@ -112,7 +113,7 @@ class Str
         while (($len = strlen($string)) < $length)
         {
             $size = $length - $len;
-            $bytes = static::randomBytes($size);
+            $bytes = self::randomBytes($size);
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
         }
 
@@ -187,6 +188,17 @@ class Str
     }
 
     /**
+     * Transliterate a UTF-8 value to ASCII.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function ascii($value)
+    {
+        return StaticStringy::toAscii($value);
+    }
+
+    /**
      * Generate a URL friendly "slug" from a given string.
      *
      * @param  string  $title
@@ -195,7 +207,7 @@ class Str
      */
     public static function slug($title, $separator = '-')
     {
-        $title = static::ascii($title);
+        $title = self::ascii($title);
 
         // Convert all dashes/underscores into separator
         $flip = $separator == '-' ? '_' : '-';
@@ -228,4 +240,51 @@ class Str
         return false;
     }
 
+    /**
+     * Convert a value to camel case.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function camel($value)
+    {
+        return lcfirst(self::studly($value));
+    }
+
+    /**
+     * Convert a value to studly caps case.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public static function studly($value)
+    {
+        $value = ucwords(str_replace(['-', '_'], ' ', $value));
+
+        return str_replace(' ', '', $value);
+    }
+
+    /**
+     * Returns the portion of string specified by the start and length parameters.
+     *
+     * @param  string  $string
+     * @param  int  $start
+     * @param  int|null  $length
+     * @return string
+     */
+    public static function substr($string, $start, $length = null)
+    {
+        return mb_substr($string, $start, $length, 'UTF-8');
+    }
+
+    /**
+     * Make a string's first character uppercase.
+     *
+     * @param  string  $string
+     * @return string
+     */
+    public static function ucfirst($string)
+    {
+        return self::upper(self::substr($string, 0, 1)).self::substr($string, 1);
+    }
 }
