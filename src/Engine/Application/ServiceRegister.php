@@ -23,7 +23,7 @@ class ServiceRegister implements ServiceRegisterContract
         if (defined('PATH_FILE_ENV')) {
             $path = PATH_FILE_ENV;
         } else {
-            $path = __DIR__ . '/../../.env';
+            $path = __DIR__ . '/../../../config/.env';
         }
 
         if (file_exists($path)) {

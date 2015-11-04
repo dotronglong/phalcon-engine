@@ -2,7 +2,7 @@
     "name": "dotronglong/phalcon-engine",
     "type": "library",
     "description": "An engine for building Phalcon CMS",
-    "keywords": ["phalcon", "engine", "cms"],
+    "keywords": ["phalcon", "engine", "dotronglong"],
     "homepage": "https://github.com/dotronglong/phalcon-engine",
     "license": "GPLv2",
     "authors": [
@@ -15,14 +15,16 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "symfony/console": "2.7.*",
         "symfony/var-dumper": "2.7.*"
     },
     "autoload": {
         "psr-4": {
             "Engine\\": "src/Engine",
             "Engine\\Tests\\": "tests"
-        }
+        },
+        "files": [
+            "src/Engine/helpers.php"
+        ]
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0"
