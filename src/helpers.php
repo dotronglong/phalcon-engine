@@ -167,7 +167,7 @@ if ( ! function_exists('config'))
                             return require PATH_APP_CONFIG . "/$scope.php";
                         }
                     }, [$scope]);
-                    $config->sets([$scope => $data]);
+                    $config->sets([$scope => $data], true);
                 }
                 return $config->get($key, $default);
             }
