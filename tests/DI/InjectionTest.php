@@ -63,7 +63,12 @@ class InjectionTest extends TestCase
         $content = 'this_is_test_content';
         $secondObject = new SecondObject();
         $secondObject->content = $content;
+
         $instance = $di->get($this->abstractClass, ['secondObject' => $secondObject]);
+        $this->assertEquals($content, $instance->getSecondObject()->content);
+
+        $firstObject = new FirstObject();
+        $instance = $di->get($this->abstractClass, [$firstObject, $secondObject]);
         $this->assertEquals($content, $instance->getSecondObject()->content);
     }
 

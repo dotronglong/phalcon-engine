@@ -2,6 +2,7 @@
 
 use Engine\Exception\BindingResolutionException;
 use Engine\Exception\ClassNotFoundException;
+use Engine\Exception\InvalidInstanceException;
 use Engine\Exception\MethodNotFoundException;
 use Phalcon\Di\Service;
 use Phalcon\DiInterface as DI;
@@ -80,14 +81,22 @@ class Factory extends Service implements Contract
         $dependencies = [];
         if ($reflector->hasMethod($name)) {
             $method = $reflector->getMethod($name);
-            foreach ($method->getParameters() as $parameter) {
+            foreach ($method->getParameters() as $i => $parameter) {
                 // Get parameter name
                 $name = $parameter->getName();
 
                 $dependency = null;
-                // Use the predefined parameter if it is set already
                 if (is_array($parameters) && isset($parameters[$name])) {
+                    // Use the predefined parameter if it is set already
                     $dependency = $parameters[$name];
+                } elseif (is_array($parameters) && isset($parameters[$i])) {
+                    // Use the provided parameter if it is set and instanceof the parameter abstract
+                    $typeHint = $parameter->getClass()->getName();
+                    if ($parameters[$i] instanceof $typeHint) {
+                        $dependency = $parameters[$i];
+                    } else {
+                        throw new InvalidInstanceException("$typeHint is required, provided: " . get_class($parameters[$i]));
+                    }
                 } else {
                     // Build dependency for this parameter
                     if ($abstract = $parameter->getClass()) {
