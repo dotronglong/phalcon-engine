@@ -89,7 +89,7 @@ class Factory extends Service implements Contract
                 if (is_array($parameters) && isset($parameters[$name])) {
                     // Use the predefined parameter if it is set already
                     $dependency = $parameters[$name];
-                } elseif (is_array($parameters) && isset($parameters[$i])) {
+                } elseif (is_array($parameters) && isset($parameters[$i]) && !is_null($parameter->getClass())) {
                     // Use the provided parameter if it is set and instanceof the parameter abstract
                     $typeHint = $parameter->getClass()->getName();
                     if ($parameters[$i] instanceof $typeHint) {
