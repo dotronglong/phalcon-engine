@@ -18,6 +18,7 @@ class ServiceRegister implements ServiceRegisterContract
         // TODO: Implement onBoot() method.
         $this->registerDb();
         $this->registerModelsManager();
+        $this->registerModelsMetaData();
     }
 
     public function onReady()
