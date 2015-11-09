@@ -6,6 +6,7 @@ use Phalcon\Db\Adapter\Pdo\Oracle;
 use Phalcon\Db\Adapter\Pdo\Postgresql;
 use Phalcon\Db\Adapter\Pdo\Sqlite;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
+use Phalcon\Mvc\Model\Metadata\Memory as MetaData;
 use Engine\DI\HasInjection;
 
 class ServiceRegister implements ServiceRegisterContract
@@ -61,6 +62,13 @@ class ServiceRegister implements ServiceRegisterContract
     {
         $this->getDI()->setShared('modelsManager', function() {
             return new ModelsManager();
+        });
+    }
+
+    protected function registerModelsMetaData()
+    {
+        $this->getDI()->setShared('modelsMetadata', function() {
+            return new MetaData();
         });
     }
 }
